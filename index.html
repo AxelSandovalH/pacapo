@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pácapo Repostería — Manzanillo</title>
-  <meta name="description" content="Repostería artesanal en Manzanillo. Pasteles por encargo, tartas, cheesecakes, macarons, cookies y más. Pide por WhatsApp." />
+  <title>Pácapo Repostería | Pasteles y Postres Personalizados en Manzanillo, Colima</title>
+  <meta name="description" content="Repostería artesanal en Manzanillo, Colima. Pasteles personalizados por encargo, tartas, cheesecakes y más. Más de 5 años endulzando celebraciones. Pedidos por WhatsApp al 314 144 1119." />
+  <meta name="keywords" content="pasteles en Manzanillo, repostería Manzanillo Colima, pasteles personalizados Manzanillo, pastel de cumpleaños Manzanillo, cheesecake Manzanillo, postres por encargo Manzanillo" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -534,6 +535,75 @@
     footer .footer-links a:hover { opacity: 1; }
     footer .copy { font-size: 0.75rem; opacity: 0.4; }
 
+    /* ── SOCIAL PROOF BAR ── */
+    .social-proof {
+      background: var(--blanco);
+      border-bottom: 1px solid var(--crema-osc);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 3rem;
+      flex-wrap: wrap;
+    }
+    .sp-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.85rem;
+      color: var(--cafe-med);
+    }
+    .sp-item strong { color: var(--cafe); font-size: 1.1rem; font-weight: 700; }
+    .sp-dot { width: 4px; height: 4px; background: var(--crema-osc); border-radius: 50%; }
+
+    /* ── MICROCOPY ── */
+    .microcopy {
+      font-size: 0.75rem;
+      opacity: 0.65;
+      margin-top: 0.6rem;
+      display: block;
+    }
+    .btn-primary + .microcopy,
+    .hero-btns .microcopy { color: var(--cafe-med); }
+
+    /* ── URGENCY BADGE ── */
+    .urgency-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: #FFF3CD;
+      border: 1px solid #F0C040;
+      color: #7A5A00;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.4rem 1rem;
+      border-radius: 50px;
+      margin-bottom: 1.5rem;
+    }
+    .urgency-dot {
+      width: 7px; height: 7px;
+      background: #F0A500;
+      border-radius: 50%;
+      animation: blink 1.4s infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    /* ── TRUST STRIP ── */
+    .trust-row {
+      display: flex;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      color: var(--cafe-med);
+    }
+    .trust-item svg { width: 14px; height: 14px; fill: var(--rojo); flex-shrink: 0; }
+
     /* ── FLOAT WPP BTN ── */
     .wpp-float {
       position: fixed;
@@ -603,19 +673,27 @@
 <!-- HERO -->
 <section class="hero" id="inicio">
   <div class="hero-text">
-    <p class="hero-tag">✦ Repostería artesanal · Manzanillo</p>
+    <p class="hero-tag">✦ Repostería artesanal · Manzanillo, Colima</p>
     <h1 class="hero-title">
-      Postres que<br><em>enamoran</em><br>a primera vista
+      El pastel de tu<br><em>celebración,</em><br>hecho a mano
     </h1>
     <p class="hero-desc">
-      Desde Manzanillo con amor. Pasteles por encargo, tartas, cheesecakes, macarons y más — hechos a mano con ingredientes de calidad para tus momentos especiales.
+      Cumpleaños, bodas, baby showers, graduaciones — cada ocasión merece un postre que sorprenda. Pasteles personalizados en Manzanillo, elaborados con ingredientes premium y mucho amor.
     </p>
     <div class="hero-btns">
-      <a href="https://wa.me/523141441119?text=Hola%20Pácapo!%20Me%20gustaría%20hacer%20un%20pedido%20🍰" class="btn-primary" target="_blank" rel="noopener">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        Hacer pedido
-      </a>
-      <a href="#menu" class="btn-secondary">Ver menú &rarr;</a>
+      <div>
+        <a href="https://wa.me/523141441119?text=Hola%20P%C3%A1capo%2C%20quiero%20cotizar%20un%20postre%20para%20%5Bocasi%C3%B3n%5D%20para%20%5Bpersonas%5D%20personas%20en%20%5Bfecha%5D.%20%C2%BFQu%C3%A9%20me%20recomiendas%3F" class="btn-primary" target="_blank" rel="noopener">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Cotizar mi pedido
+        </a>
+        <span class="microcopy">Respuesta en menos de 1 hora · Sin compromiso</span>
+      </div>
+      <a href="#menu" class="btn-secondary">Ver precios &rarr;</a>
+    </div>
+    <div class="trust-row">
+      <span class="trust-item"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> +500 pedidos entregados</span>
+      <span class="trust-item"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> 5 años en Manzanillo</span>
+      <span class="trust-item"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Ingredientes premium</span>
     </div>
   </div>
   <div class="hero-image">
@@ -635,13 +713,24 @@
   <span>✦</span> Pasteles por encargo <span>✦</span> Tartas artesanales <span>✦</span> Cheesecakes <span>✦</span> Macarons <span>✦</span> Cookies <span>✦</span> Alfajores <span>✦</span>
 </div>
 
+<!-- SOCIAL PROOF BAR -->
+<div class="social-proof">
+  <div class="sp-item"><strong>+500</strong> pedidos entregados</div>
+  <div class="sp-dot"></div>
+  <div class="sp-item"><strong>5 años</strong> endulzando Manzanillo</div>
+  <div class="sp-dot"></div>
+  <div class="sp-item"><strong>100%</strong> hecho a mano</div>
+  <div class="sp-dot"></div>
+  <div class="sp-item"><strong>⭐ 5/5</strong> calificación en redes</div>
+</div>
+
 <!-- PRODUCTOS -->
 <section id="productos">
   <div class="container">
     <div class="section-header">
-      <p class="section-label">Nuestros productos</p>
-      <h2 class="section-title">Cada pieza,<br>una obra de arte</h2>
-      <p class="section-desc">Elaborados con técnica, pasión y los mejores ingredientes. Desde pasteles de celebración hasta postres de vitrina para cualquier antojo.</p>
+      <p class="section-label">Repostería artesanal en Manzanillo</p>
+      <h2 class="section-title">Postres que hacen<br>inolvidable tu ocasión</h2>
+      <p class="section-desc">Desde pasteles personalizados para cumpleaños hasta cheesecakes de vitrina — todo elaborado a mano con técnica de pastelería profesional e ingredientes de primera calidad.</p>
     </div>
     <div class="gallery-grid">
       <div class="gallery-item">
@@ -692,9 +781,10 @@
 <section id="menu">
   <div class="container">
     <div class="section-header center">
-      <p class="section-label">Menú y precios</p>
-      <h2 class="section-title">Encuentra tu postre<br>perfecto</h2>
-      <p class="section-desc">Pedidos con 2 a 3 días de anticipación. Contáctanos por WhatsApp para confirmar disponibilidad.</p>
+      <p class="section-label">Menú y precios — Manzanillo, Colima</p>
+      <h2 class="section-title">Pasteles y postres<br>para cada celebración</h2>
+      <div class="urgency-badge"><span class="urgency-dot"></span> Agenda limitada — reserva con 2 a 3 días de anticipación</div>
+      <p class="section-desc">Pasteles personalizados, tartas artesanales y cheesecakes en Manzanillo. Escríbenos por WhatsApp para confirmar disponibilidad y apartamos tu fecha.</p>
     </div>
     <div class="menu-grid">
 
@@ -804,10 +894,11 @@
     </div>
 
     <div class="menu-cta">
-      <a href="https://wa.me/523141441119?text=Hola%20Pácapo!%20Quiero%20ver%20el%20menú%20completo%20y%20hacer%20un%20pedido%20🍰" class="btn-primary" target="_blank" rel="noopener">
+      <a href="https://wa.me/523141441119?text=Hola%20P%C3%A1capo%2C%20quiero%20cotizar%20un%20postre%20para%20%5Bocasi%C3%B3n%5D%20para%20%5Bpersonas%5D%20personas%20en%20%5Bfecha%5D.%20%C2%BFQu%C3%A9%20me%20recomiendas%3F" class="btn-primary" target="_blank" rel="noopener">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        Hacer mi pedido ahora
+        Quiero cotizar mi pedido
       </a>
+      <span class="microcopy" style="color:var(--cafe-med)">Te respondemos en menos de 1 hora · Asesoría gratis</span>
     </div>
   </div>
 </section>
@@ -817,9 +908,9 @@
   <div class="container">
     <div class="proceso-grid">
       <div>
-        <p class="section-label">Nuestra historia</p>
-        <h2 class="section-title">5 años endulzando<br>Manzanillo</h2>
-        <p class="section-desc">Pácapo nació del amor por la repostería de precisión. Cada postre es elaborado a mano, con recetas propias y ingredientes cuidadosamente seleccionados.</p>
+        <p class="section-label">Nuestra historia · Manzanillo, Colima</p>
+        <h2 class="section-title">5 años creando<br>momentos dulces</h2>
+        <p class="section-desc">Pácapo nació del amor por la repostería de precisión. Cada postre es elaborado a mano con recetas propias — porque tu celebración merece algo especial, no genérico.</p>
         <div class="steps">
           <div class="step">
             <div class="step-num">1</div>
@@ -857,17 +948,18 @@
 <section id="pedido">
   <div class="container">
     <div class="pedido-card">
-      <p class="section-label">¿Listo para ordenar?</p>
-      <h2>Tu postre favorito,<br>a un mensaje de distancia</h2>
-      <p>Escríbenos por WhatsApp, cuéntanos qué necesitas y con gusto te asesoramos para crear el postre perfecto para tu ocasión.</p>
-      <a href="https://wa.me/523141441119?text=Hola%20Pácapo!%20Me%20gustaría%20hacer%20un%20pedido%20🍰" class="btn-wpp" target="_blank" rel="noopener">
+      <p class="section-label">¿Lista tu fecha? Aparta tu lugar</p>
+      <h2>Tu celebración merece<br>el postre perfecto</h2>
+      <p>Cuéntanos la ocasión, cuántas personas y tu fecha — te asesoramos gratis y creamos exactamente lo que imaginas. Agenda limitada cada semana.</p>
+      <a href="https://wa.me/523141441119?text=Hola%20P%C3%A1capo%2C%20quiero%20cotizar%20un%20postre%20para%20%5Bocasi%C3%B3n%5D%20para%20%5Bpersonas%5D%20personas%20en%20%5Bfecha%5D.%20%C2%BFQu%C3%A9%20me%20recomiendas%3F" class="btn-wpp" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        Escribir por WhatsApp
+        Cotizar por WhatsApp — es gratis
       </a>
+      <span class="microcopy" style="color:rgba(255,255,255,0.7);display:block;margin-top:0.7rem;">Respondemos en menos de 1 hora · Sin compromiso</span>
       <div class="info-chips">
         <span class="chip">📍 Manzanillo, Colima</span>
-        <span class="chip">⏰ Pedidos con 2-3 días de anticipación</span>
-        <span class="chip">💌 hcanacarolina@gmail.com</span>
+        <span class="chip">⏰ Agenda con 2-3 días de anticipación</span>
+        <span class="chip">🎂 Cumpleaños · Bodas · Baby shower</span>
       </div>
     </div>
   </div>
@@ -881,7 +973,7 @@
       <h2 class="section-title">Encuéntranos en<br>redes sociales</h2>
     </div>
     <div class="redes-grid">
-      <a href="https://wa.me/523141441119" class="red-card rc-wpp" target="_blank" rel="noopener">
+      <a href="https://wa.me/523141441119?text=Hola%20P%C3%A1capo%2C%20quiero%20cotizar%20un%20postre%20para%20%5Bocasi%C3%B3n%5D%20para%20%5Bpersonas%5D%20personas%20en%20%5Bfecha%5D.%20%C2%BFQu%C3%A9%20me%20recomiendas%3F" class="red-card rc-wpp" target="_blank" rel="noopener">
         <div class="red-icon">
           <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         </div>
@@ -929,7 +1021,7 @@
 </footer>
 
 <!-- FLOATING WPP -->
-<a href="https://wa.me/523141441119?text=Hola%20Pácapo!%20Me%20gustaría%20hacer%20un%20pedido%20🍰" class="wpp-float" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
+<a href="https://wa.me/523141441119?text=Hola%20P%C3%A1capo%2C%20quiero%20cotizar%20un%20postre%20para%20%5Bocasi%C3%B3n%5D%20para%20%5Bpersonas%5D%20personas%20en%20%5Bfecha%5D.%20%C2%BFQu%C3%A9%20me%20recomiendas%3F" class="wpp-float" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
   <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
 </a>
 
