@@ -1,0 +1,643 @@
+/* ── BASE ── */
+.wrap {
+  font-family: 'Inter', sans-serif;
+  background: #FBF0E4;
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+/* ── LOADING ── */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 1rem;
+  color: #7A4A2A;
+  font-size: 0.95rem;
+}
+.loadingIcon { font-size: 2.5rem; }
+
+/* ── LOGIN ── */
+.loginPage {
+  min-height: 100vh;
+  background: #3D2012;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+.loginCard {
+  background: #FFFAF7;
+  border-radius: 24px;
+  padding: 2.5rem 2rem;
+  width: 100%;
+  max-width: 400px;
+}
+.loginTop {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.loginEmoji { font-size: 3rem; display: block; margin-bottom: 0.5rem; }
+.loginTitle {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.6rem;
+  color: #8B1A1A;
+  margin: 0;
+}
+.loginSub { font-size: 0.85rem; color: #7A4A2A; margin-top: 0.3rem; opacity: 0.8; }
+
+/* ── HEADER ── */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: #3D2012;
+  padding: 0.9rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.headerBrand {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.15rem;
+  color: #E8C8C0;
+}
+.headerActions { display: flex; gap: 0.5rem; }
+
+/* ── MAIN LAYOUT ── */
+.main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 2rem;
+}
+
+/* Desktop: two columns when on productos tab */
+.desktopGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+/* ── TABS (desktop top / mobile bottom) ── */
+.topTabs {
+  display: none;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+.bottomTabs {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #FFFAF7;
+  border-top: 1px solid #F0DEC8;
+  display: flex;
+  z-index: 50;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ── TAB BUTTON ── */
+.tabBtn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.75rem 0.5rem;
+  background: none;
+  border: none;
+  border-top: 3px solid transparent;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  color: #7A4A2A;
+  transition: color 0.15s;
+}
+.tabBtn.active {
+  border-top-color: #8B1A1A;
+  color: #8B1A1A;
+}
+.tabIcon { font-size: 1.3rem; line-height: 1; }
+.tabLabel { font-size: 0.72rem; font-weight: 500; }
+.tabBtn.active .tabLabel { font-weight: 700; }
+
+/* desktop top tabs */
+.topTabBtn {
+  padding: 0.65rem 1.5rem;
+  border-radius: 50px;
+  border: 1.5px solid #F0DEC8;
+  background: #FFFAF7;
+  color: #7A4A2A;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.topTabBtn.active {
+  background: #8B1A1A;
+  color: #fff;
+  border-color: #8B1A1A;
+}
+
+/* ── CARDS ── */
+.card {
+  background: #FFFAF7;
+  border-radius: 18px;
+  padding: 1.25rem;
+  border: 1px solid #F0DEC8;
+  margin-bottom: 1rem;
+}
+.cardLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #8B1A1A;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+/* ── FORM FIELDS ── */
+.fGroup { margin-bottom: 1rem; }
+.fRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+.label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #7A4A2A;
+  margin-bottom: 0.4rem;
+}
+.req { color: #8B1A1A; }
+
+/* font-size 16px = sin zoom en iOS */
+.input,
+.textarea,
+.select {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 1.5px solid #F0DEC8;
+  border-radius: 12px;
+  font-size: 16px;
+  font-family: 'Inter', sans-serif;
+  background: #FBF0E4;
+  color: #3D2012;
+  outline: none;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: border-color 0.15s;
+}
+.input:focus,
+.textarea:focus,
+.select:focus {
+  border-color: #8B1A1A;
+}
+.input::placeholder,
+.textarea::placeholder,
+.inputSm::placeholder {
+  color: #C4A882;
+  opacity: 1;
+  font-style: italic;
+}
+.textarea {
+  resize: vertical;
+  min-height: 90px;
+  line-height: 1.5;
+}
+.select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237A4A2A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+  cursor: pointer;
+}
+
+/* Password wrapper */
+.passWrap { position: relative; }
+.passToggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0.25rem;
+}
+
+/* ── FOTO UPLOAD ── */
+.dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  border: 2px dashed #F0DEC8;
+  border-radius: 14px;
+  padding: 2.5rem 1rem;
+  cursor: pointer;
+  background: #FBF0E4;
+  text-align: center;
+  transition: border-color 0.15s, background 0.15s;
+}
+.dropzone:hover { border-color: #8B1A1A; background: #f5e8d8; }
+.dropzoneIcon { font-size: 2.8rem; line-height: 1; }
+.dropzoneTitle { font-size: 1rem; font-weight: 600; color: #3D2012; }
+.dropzoneSub { font-size: 0.8rem; color: #7A4A2A; opacity: 0.8; }
+
+.fotosGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.6rem;
+  margin-bottom: 0.75rem;
+}
+.fotoItem {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #F0DEC8;
+}
+.fotoPrimera::after {
+  content: 'Principal';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(139,26,26,0.85);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 0.25rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.removePhoto {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: rgba(61,32,18,0.8);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  line-height: 1;
+}
+.removePhoto:hover { background: #8B1A1A; }
+.addMasBtn {
+  aspect-ratio: 1;
+  border: 2px dashed #F0DEC8;
+  border-radius: 12px;
+  background: #FBF0E4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  cursor: pointer;
+  color: #7A4A2A;
+  font-size: 0.75rem;
+  font-family: 'Inter', sans-serif;
+  transition: border-color 0.15s;
+}
+.addMasBtn:hover { border-color: #8B1A1A; color: #8B1A1A; }
+.addMasIcon { font-size: 1.4rem; line-height: 1; }
+
+/* ── OPCIONES ── */
+.opcionCard {
+  background: #FBF0E4;
+  border-radius: 14px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid #F0DEC8;
+}
+.opcionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+.opcionNum {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #7A4A2A;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.btnQuitar {
+  background: #fce4e4;
+  border: none;
+  border-radius: 8px;
+  color: #8B1A1A;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+}
+.opcionRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+.inputSm {
+  width: 100%;
+  padding: 0.7rem 0.85rem;
+  border: 1.5px solid #F0DEC8;
+  border-radius: 10px;
+  font-size: 16px;
+  font-family: 'Inter', sans-serif;
+  background: #FFFAF7;
+  color: #3D2012;
+  outline: none;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.inputSm:focus { border-color: #8B1A1A; }
+
+.btnAddOpcion {
+  width: 100%;
+  padding: 0.85rem;
+  border: 2px dashed #F0DEC8;
+  border-radius: 14px;
+  background: none;
+  color: #7A4A2A;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.btnAddOpcion:hover { border-color: #8B1A1A; color: #8B1A1A; }
+
+/* ── VISIBILIDAD TOGGLE ── */
+.visibilidadRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.visibilidadText p:first-child {
+  font-weight: 600;
+  color: #3D2012;
+  font-size: 0.95rem;
+  margin-bottom: 0.2rem;
+}
+.visibilidadText p:last-child { font-size: 0.8rem; color: #7A4A2A; }
+
+/* ── TOGGLE SWITCH ── */
+.toggle {
+  width: 52px;
+  height: 30px;
+  border-radius: 15px;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: background 0.2s;
+  background: #F0DEC8;
+}
+.toggle.on { background: #8B1A1A; }
+.toggleThumb {
+  position: absolute;
+  top: 3px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  transition: left 0.2s;
+  left: 3px;
+}
+.toggle.on .toggleThumb { left: 25px; }
+
+/* ── ALERTS ── */
+.alertOk {
+  background: #e8f8ef;
+  color: #1a6a3a;
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+}
+.alertErr {
+  background: #fce4e4;
+  color: #8B1A1A;
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+}
+.authError {
+  background: #fce4e4;
+  color: #8B1A1A;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* ── BUTTONS ── */
+.btnPrimary {
+  width: 100%;
+  padding: 1rem;
+  background: #8B1A1A;
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(139,26,26,0.3);
+  transition: background 0.15s, transform 0.1s;
+}
+.btnPrimary:hover:not(:disabled) { background: #B22222; transform: translateY(-1px); }
+.btnPrimary:disabled { opacity: 0.65; cursor: default; }
+
+.btnSecondary {
+  width: 100%;
+  padding: 1rem;
+  background: none;
+  border: 1.5px solid #F0DEC8;
+  border-radius: 50px;
+  font-size: 1rem;
+  color: #7A4A2A;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+}
+
+.btnOutline {
+  padding: 0.45rem 0.9rem;
+  border: 1px solid rgba(255,255,255,0.22);
+  border-radius: 50px;
+  background: rgba(255,255,255,0.08);
+  color: #F0DEC8;
+  font-size: 0.78rem;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  text-decoration: none;
+  display: inline-block;
+  transition: background 0.15s;
+}
+.btnOutline:hover { background: rgba(255,255,255,0.16); }
+
+/* ── LISTA PRODUCTOS ── */
+.listaHeader {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.4rem;
+  color: #3D2012;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.conteo {
+  background: #8B1A1A;
+  color: #fff;
+  border-radius: 50px;
+  padding: 0.15rem 0.65rem;
+  font-size: 0.8rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  vertical-align: middle;
+}
+.empty {
+  text-align: center;
+  padding: 3rem 1.5rem;
+}
+.emptyIcon { font-size: 3rem; display: block; margin-bottom: 1rem; }
+.emptyText { color: #7A4A2A; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem; }
+.btnEmptyCta {
+  padding: 0.8rem 2rem;
+  background: #8B1A1A;
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+}
+
+.productosList { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.productoCard {
+  background: #FFFAF7;
+  border-radius: 18px;
+  border: 1px solid #F0DEC8;
+  overflow: hidden;
+}
+.productoBody {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem;
+  align-items: center;
+}
+.productoThumb {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #F0DEC8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+}
+.productoInfo { flex: 1; min-width: 0; }
+.productoNombre {
+  font-weight: 700;
+  color: #3D2012;
+  font-size: 0.97rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.productoCategoria { font-size: 0.78rem; color: #7A4A2A; margin-top: 0.15rem; }
+.productoPrecio { font-size: 0.82rem; font-weight: 700; color: #8B1A1A; margin-top: 0.2rem; }
+
+.productoAcciones {
+  border-top: 1px solid #F0DEC8;
+  display: flex;
+}
+.accionBtn {
+  flex: 1;
+  padding: 0.65rem;
+  background: none;
+  border: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  color: #7A4A2A;
+  transition: background 0.15s;
+}
+.accionBtn:hover { background: #FBF0E4; }
+.accionDivider { width: 1px; background: #F0DEC8; flex-shrink: 0; }
+.accionEliminar { color: #8B1A1A; }
+
+/* ── MODAL BORRADO ── */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(61,32,18,0.72);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 200;
+  padding: 1rem;
+}
+.modalBox {
+  background: #FFFAF7;
+  border-radius: 24px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 420px;
+  margin-bottom: env(safe-area-inset-bottom);
+}
+.modalTitle {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.3rem;
+  color: #3D2012;
+  margin-bottom: 0.5rem;
+}
+.modalText { font-size: 0.88rem; color: #7A4A2A; margin-bottom: 1.5rem; line-height: 1.6; }
+.modalBtns { display: flex; flex-direction: column; gap: 0.6rem; }
+
+/* ── RESPONSIVE DESKTOP ── */
+@media (min-width: 768px) {
+  .wrap { padding-bottom: 0; }
+  .bottomTabs { display: none; }
+  .topTabs { display: flex; }
+  .main { padding: 2rem 2rem 3rem; }
+  .card { padding: 1.75rem; }
+  .fRow { grid-template-columns: 1fr 1fr; }
+  .productosList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+  .modalOverlay { align-items: center; }
+}
