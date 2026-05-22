@@ -412,6 +412,10 @@ export default async function Home() {
           <a href="tel:+523141441119">314 144 1119</a>
         </div>
         <p className="copy">&copy; 2026 Pácapo Repostería. Todos los derechos reservados.</p>
+        <p className="dev-credit">
+          Desarrollado por{' '}
+          <a href="https://axelsandoval.dev" target="_blank" rel="noopener">Axel Sandoval</a>
+        </p>
       </footer>
 
       {/* FLOATING WPP */}
