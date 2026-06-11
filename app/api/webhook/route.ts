@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { stripe } from '@/lib/stripe'
+import { getStripe } from '@/lib/stripe'
 import { createClient } from '@supabase/supabase-js'
 import Stripe from 'stripe'
 
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
   let event: Stripe.Event
 
   try {
-    event = stripe.webhooks.constructEvent(body, sig, secret)
+    event = getStripe().webhooks.constructEvent(body, sig, secret)
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Webhook error'
     return NextResponse.json({ error: msg }, { status: 400 })
