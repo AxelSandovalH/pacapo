@@ -358,7 +358,7 @@ export default async function Home() {
               <div className="red-icon">{WPP_SVG}</div>
               <div>
                 <h4>WhatsApp Business</h4>
-                <p>314 144 1119 — Escríbenos directo</p>
+                <p>Escríbenos directo</p>
               </div>
             </a>
             <a href="https://www.instagram.com/pacapo.reposteria?igsh=MWlpZ2lsN2h3amRuaQ==" className="red-card rc-ig" target="_blank" rel="noopener">
@@ -398,7 +398,6 @@ export default async function Home() {
           <a href="#menu">Menú</a>
           <a href="#proceso">Nosotros</a>
           <a href="mailto:hcanacarolina@gmail.com">hcanacarolina@gmail.com</a>
-          <a href="tel:+523141441119">314 144 1119</a>
         </div>
         <p className="copy">&copy; 2026 Pácapo Repostería. Todos los derechos reservados.</p>
         <p className="dev-credit">

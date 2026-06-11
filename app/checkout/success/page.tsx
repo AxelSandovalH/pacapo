@@ -24,9 +24,6 @@ export default function CheckoutSuccess() {
         <p style={{ color: 'var(--cafe-med)', marginBottom: '1.5rem', lineHeight: 1.6 }}>
           Tu pedido está confirmado. Te contactaremos pronto por WhatsApp para coordinar la fecha de entrega y los detalles de tu postre.
         </p>
-        <p style={{ color: 'var(--cafe-med)', fontSize: '0.9rem', marginBottom: '2rem' }}>
-          📱 <strong>314 144 1119</strong>
-        </p>
         <a
           href="/"
           style={{
