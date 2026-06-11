@@ -25,8 +25,7 @@ function compressImage(file: File): Promise<Blob> {
         else                 { width  = Math.round(width  * MAX_PX / height); height = MAX_PX }
       }
       const canvas = document.createElement('canvas')
-      canvas.width = width
-      canvas.height = height
+      canvas.width = width; canvas.height = height
       canvas.getContext('2d')!.drawImage(img, 0, 0, width, height)
       canvas.toBlob(b => b ? resolve(b) : reject(new Error('Canvas vacío')), 'image/jpeg', QUALITY)
     }
@@ -35,15 +34,21 @@ function compressImage(file: File): Promise<Blob> {
   })
 }
 
-const CATEGORIAS = [
-  'Pasteles por encargo',
-  'Tartas & Cheesecakes',
-  'Galletas & Alfajores',
-  'Brownies',
-  'Cupcakes',
-  'Macarons',
-  'Postres especiales',
-]
+const CATEGORIAS = ['Pasteles', 'Cheesecakes', 'Postres Premium', 'Dulcería', 'Cupcakes', 'Macarons']
+
+type Tab = 'agregar' | 'productos' | 'ordenes'
+
+type Orden = {
+  id: string
+  stripe_session_id: string
+  producto_nombre: string
+  opcion_nombre: string | null
+  opcion_precio: number
+  customer_email: string | null
+  customer_name: string | null
+  status: 'pending' | 'paid' | 'cancelled'
+  created_at: string
+}
 
 type FormState = {
   nombre: string
@@ -54,72 +59,62 @@ type FormState = {
   activo: boolean
 }
 
-const EMPTY: FormState = {
-  nombre: '',
-  categoria: '',
-  descripcion: '',
-  precio_base: '',
-  opciones: [],
-  activo: true,
-}
+const EMPTY: FormState = { nombre: '', categoria: '', descripcion: '', precio_base: '', opciones: [], activo: true }
 
-// ── TOGGLE ───────────────────────────────────────────────────
 function Toggle({ on, onChange }: { on: boolean; onChange: (v: boolean) => void }) {
   return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={on}
-      onClick={() => onChange(!on)}
-      className={`${s.toggle} ${on ? s.on : ''}`}
-    >
+    <button type="button" role="switch" aria-checked={on}
+      onClick={() => onChange(!on)} className={`${s.toggle} ${on ? s.on : ''}`}>
       <span className={s.toggleThumb} />
     </button>
   )
 }
 
-// ── MAIN ─────────────────────────────────────────────────────
+function StatusBadge({ status }: { status: Orden['status'] }) {
+  const map = { paid: { label: 'Pagado', cls: s.badgePaid }, pending: { label: 'Pendiente', cls: s.badgePending }, cancelled: { label: 'Cancelado', cls: s.badgeCancelled } }
+  const { label, cls } = map[status] ?? map.pending
+  return <span className={`${s.badge} ${cls}`}>{label}</span>
+}
+
 export default function AdminPage() {
   const [loading, setLoading]     = useState(true)
   const [authed, setAuthed]       = useState(false)
-
-  // login form
   const [email, setEmail]         = useState('')
   const [pass, setPass]           = useState('')
   const [showPass, setShowPass]   = useState(false)
   const [authErr, setAuthErr]     = useState('')
   const [authBusy, setAuthBusy]   = useState(false)
 
-  // dashboard
-  const [tab, setTab]             = useState<'agregar' | 'productos'>('agregar')
+  const [tab, setTab]             = useState<Tab>('productos')
   const [productos, setProductos] = useState<Producto[]>([])
+  const [ordenes, setOrdenes]     = useState<Orden[]>([])
+  const [editId, setEditId]       = useState<string | null>(null)
   const [form, setForm]           = useState<FormState>(EMPTY)
   const [imgFiles, setImgFiles]   = useState<File[]>([])
   const [imgPrevs, setImgPrevs]   = useState<string[]>([])
+  const [existingImgs, setExistingImgs] = useState<string[]>([])
   const [busy, setBusy]           = useState(false)
   const [msg, setMsg]             = useState<{ ok: boolean; text: string } | null>(null)
   const [delId, setDelId]         = useState<string | null>(null)
+  const [ordenFilter, setOrdenFilter] = useState<'all' | 'paid' | 'pending'>('all')
 
   const fileRef = useRef<HTMLInputElement>(null)
 
-  // ── auth ──
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) { setAuthed(true); load() }
+      if (data.session) { setAuthed(true); loadAll() }
       setLoading(false)
     })
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
       setAuthed(!!session)
-      if (session) load()
+      if (session) loadAll()
     })
     return () => subscription.unsubscribe()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   async function login(e: React.FormEvent) {
-    e.preventDefault()
-    setAuthBusy(true)
-    setAuthErr('')
+    e.preventDefault(); setAuthBusy(true); setAuthErr('')
     const { error } = await supabase.auth.signInWithPassword({ email, password: pass })
     if (error) setAuthErr('Correo o contraseña incorrectos.')
     setAuthBusy(false)
@@ -127,39 +122,29 @@ export default function AdminPage() {
 
   async function logout() {
     await supabase.auth.signOut()
-    setAuthed(false)
-    setProductos([])
-    setForm(EMPTY)
-    clearImg()
+    setAuthed(false); setProductos([]); setOrdenes([]); setForm(EMPTY); clearImg()
   }
 
-  // ── data ──
-  async function load() {
-    const { data } = await supabase
-      .from('productos')
-      .select('*')
-      .order('created_at', { ascending: false })
-    setProductos((data as Producto[]) ?? [])
+  async function loadAll() {
+    const [{ data: prods }, { data: ords }] = await Promise.all([
+      supabase.from('productos').select('*').order('created_at', { ascending: false }),
+      supabase.from('ordenes').select('*').order('created_at', { ascending: false }),
+    ])
+    setProductos((prods as Producto[]) ?? [])
+    setOrdenes((ords as Orden[]) ?? [])
   }
 
-  // ── form helpers ──
   function setField<K extends keyof FormState>(key: K, val: FormState[K]) {
     setForm(f => ({ ...f, [key]: val }))
   }
 
-  function addOpcion() {
-    setField('opciones', [...form.opciones, { nombre: '', precio: 0, descripcion: '' }])
-  }
-
+  function addOpcion() { setField('opciones', [...form.opciones, { nombre: '', precio: 0, descripcion: '' }]) }
   function updOpcion(i: number, key: keyof Opcion, val: string) {
     const ops = [...form.opciones]
     ops[i] = { ...ops[i], [key]: key === 'precio' ? Number(val) : val }
     setField('opciones', ops)
   }
-
-  function remOpcion(i: number) {
-    setField('opciones', form.opciones.filter((_, idx) => idx !== i))
-  }
+  function remOpcion(i: number) { setField('opciones', form.opciones.filter((_, idx) => idx !== i)) }
 
   function handleImg(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files ?? [])
@@ -168,65 +153,70 @@ export default function AdminPage() {
     setImgPrevs(prev => [...prev, ...files.map(f => URL.createObjectURL(f))])
     if (fileRef.current) fileRef.current.value = ''
   }
-
   function removeImg(i: number) {
     setImgFiles(prev => prev.filter((_, idx) => idx !== i))
     setImgPrevs(prev => prev.filter((_, idx) => idx !== i))
   }
+  function removeExistingImg(i: number) { setExistingImgs(prev => prev.filter((_, idx) => idx !== i)) }
+  function clearImg() { setImgFiles([]); setImgPrevs([]); setExistingImgs([]); if (fileRef.current) fileRef.current.value = '' }
 
-  function clearImg() {
-    setImgFiles([])
-    setImgPrevs([])
-    if (fileRef.current) fileRef.current.value = ''
+  function startEdit(p: Producto) {
+    setEditId(p.id)
+    setForm({ nombre: p.nombre, categoria: p.categoria, descripcion: p.descripcion, precio_base: String(p.precio_base), opciones: p.opciones ?? [], activo: p.activo })
+    setExistingImgs(p.imagenes ?? (p.imagen_url ? [p.imagen_url] : []))
+    setImgFiles([]); setImgPrevs([])
+    setMsg(null)
+    setTab('agregar')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  // ── submit ──
-  async function submit(e: React.FormEvent) {
-    e.preventDefault()
-    setMsg(null)
+  function cancelEdit() {
+    setEditId(null); setForm(EMPTY); clearImg(); setMsg(null)
+  }
 
+  async function submit(e: React.FormEvent) {
+    e.preventDefault(); setMsg(null)
     const nombre      = form.nombre.trim()
     const descripcion = form.descripcion.trim()
-
-    if (!nombre)      return setMsg({ ok: false, text: 'Escribe el nombre del producto.' })
+    if (!nombre)         return setMsg({ ok: false, text: 'Escribe el nombre del producto.' })
     if (!form.categoria) return setMsg({ ok: false, text: 'Elige una categoría.' })
-    if (!descripcion) return setMsg({ ok: false, text: 'Agrega una descripción.' })
+    if (!descripcion)    return setMsg({ ok: false, text: 'Agrega una descripción.' })
     if (!form.precio_base) return setMsg({ ok: false, text: 'Escribe el precio base.' })
-
     setBusy(true)
 
-    // Comprimir y subir todas las fotos
-    const imagenes: string[] = []
+    const nuevasUrls: string[] = []
     for (const file of imgFiles) {
       const blob = await compressImage(file)
       const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`
       const { error: upErr } = await supabase.storage.from(BUCKET).upload(path, blob, { contentType: 'image/jpeg' })
-      if (upErr) {
-        setMsg({ ok: false, text: `Error subiendo imagen: ${upErr.message}` })
-        setBusy(false)
-        return
-      }
-      imagenes.push(supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl)
+      if (upErr) { setMsg({ ok: false, text: `Error subiendo imagen: ${upErr.message}` }); setBusy(false); return }
+      nuevasUrls.push(supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl)
     }
 
-    const { error } = await supabase.from('productos').insert({
-      nombre,
-      categoria:   form.categoria,
-      descripcion,
+    const imagenes = [...existingImgs, ...nuevasUrls]
+    const payload = {
+      nombre, categoria: form.categoria, descripcion,
       precio_base: Number(form.precio_base),
-      opciones:    form.opciones.filter(o => o.nombre.trim()),
-      imagen_url:  imagenes[0] ?? null,
+      opciones: form.opciones.filter(o => o.nombre.trim()),
+      imagen_url: imagenes[0] ?? null,
       imagenes,
-      activo:      form.activo,
-    })
+      activo: form.activo,
+    }
+
+    let error
+    if (editId) {
+      ({ error } = await supabase.from('productos').update(payload).eq('id', editId))
+    } else {
+      ({ error } = await supabase.from('productos').insert(payload))
+    }
 
     if (error) {
       setMsg({ ok: false, text: `Error: ${error.message}` })
     } else {
-      setMsg({ ok: true, text: `¡Producto guardado con ${imagenes.length || 0} foto${imagenes.length !== 1 ? 's' : ''}! Ya aparece en el sitio.` })
-      setForm(EMPTY)
-      clearImg()
-      load()
+      const accion = editId ? 'Producto actualizado' : 'Producto guardado'
+      setMsg({ ok: true, text: `¡${accion} con ${imagenes.length} foto${imagenes.length !== 1 ? 's' : ''}! Ya aparece en el sitio.` })
+      setEditId(null); setForm(EMPTY); clearImg()
+      loadAll()
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
     setBusy(false)
@@ -234,80 +224,67 @@ export default function AdminPage() {
 
   async function toggleActivo(p: Producto) {
     await supabase.from('productos').update({ activo: !p.activo }).eq('id', p.id)
-    load()
+    loadAll()
   }
 
   async function confirmDel() {
     if (!delId) return
     await supabase.from('productos').delete().eq('id', delId)
-    setDelId(null)
-    load()
+    setDelId(null); loadAll()
   }
+
+  const ordenesFiltradas = ordenes.filter(o => ordenFilter === 'all' || o.status === ordenFilter)
+  const totalPagado = ordenes.filter(o => o.status === 'paid').reduce((sum, o) => sum + o.opcion_precio, 0)
 
   // ── renders ──────────────────────────────────────────────
 
-  if (loading) {
-    return (
-      <div className={s.loading}>
-        <span className={s.loadingIcon}>—</span>
-        Cargando...
-      </div>
-    )
-  }
+  if (loading) return (
+    <div className={s.loading}><span className={s.loadingIcon}>🍒</span>Cargando...</div>
+  )
 
-  if (!authed) {
-    return (
-      <div className={s.loginPage}>
-        <div className={s.loginCard}>
-          <div className={s.loginTop}>
-            <h1 className={s.loginTitle}>Pácapo Admin</h1>
-            <p className={s.loginSub}>Ingresa para gestionar tus productos</p>
-          </div>
-
-          <form onSubmit={login}>
-            <div className={s.fGroup}>
-              <label className={s.label} htmlFor="email">Correo electrónico</label>
-              <input
-                id="email" type="email" required autoComplete="email"
-                value={email} onChange={e => setEmail(e.target.value)}
-                className={s.input} placeholder="correo@ejemplo.com"
-              />
-            </div>
-            <div className={s.fGroup}>
-              <label className={s.label} htmlFor="pass">Contraseña</label>
-              <div className={s.passWrap}>
-                <input
-                  id="pass" type={showPass ? 'text' : 'password'} required autoComplete="current-password"
-                  value={pass} onChange={e => setPass(e.target.value)}
-                  className={s.input} placeholder="••••••••"
-                  style={{ paddingRight: '3rem' }}
-                />
-                <button type="button" className={s.passToggle} onClick={() => setShowPass(v => !v)}>
-                  {showPass ? '🙈' : '👁️'}
-                </button>
-              </div>
-            </div>
-
-            {authErr && <div className={s.authError}>{authErr}</div>}
-
-            <button type="submit" className={s.btnPrimary} disabled={authBusy}>
-              {authBusy ? 'Entrando...' : 'Entrar →'}
-            </button>
-          </form>
+  if (!authed) return (
+    <div className={s.loginPage}>
+      <div className={s.loginCard}>
+        <div className={s.loginTop}>
+          <span className={s.loginEmoji}>🎂</span>
+          <h1 className={s.loginTitle}>Pácapo Admin</h1>
+          <p className={s.loginSub}>Ingresa para gestionar tus productos</p>
         </div>
+        <form onSubmit={login}>
+          <div className={s.fGroup}>
+            <label className={s.label} htmlFor="email">Correo electrónico</label>
+            <input id="email" type="email" required autoComplete="email"
+              value={email} onChange={e => setEmail(e.target.value)}
+              className={s.input} placeholder="correo@ejemplo.com" />
+          </div>
+          <div className={s.fGroup}>
+            <label className={s.label} htmlFor="pass">Contraseña</label>
+            <div className={s.passWrap}>
+              <input id="pass" type={showPass ? 'text' : 'password'} required autoComplete="current-password"
+                value={pass} onChange={e => setPass(e.target.value)}
+                className={s.input} placeholder="••••••••" style={{ paddingRight: '3rem' }} />
+              <button type="button" className={s.passToggle} onClick={() => setShowPass(v => !v)}>
+                {showPass ? '🙈' : '👁️'}
+              </button>
+            </div>
+          </div>
+          {authErr && <div className={s.authError}>{authErr}</div>}
+          <button type="submit" className={s.btnPrimary} disabled={authBusy}>
+            {authBusy ? 'Entrando...' : 'Entrar →'}
+          </button>
+        </form>
       </div>
-    )
-  }
+    </div>
+  )
 
-  // ── dashboard ──
   return (
     <div className={s.wrap}>
 
       {/* HEADER */}
       <header className={s.header}>
-        <span className={s.headerBrand}>Pácapo Admin</span>
+        <span className={s.headerBrand}>🎂 Pácapo Admin</span>
         <div className={s.headerActions}>
-          <a href="/" target="_blank" className={s.btnOutline}>Ver sitio</a>
+          <a href="/" target="_blank" className={s.btnOutline}>Ver sitio ↗</a>
           <button onClick={logout} className={s.btnOutline}>Salir</button>
         </div>
       </header>
@@ -316,44 +293,49 @@ export default function AdminPage() {
 
         {/* TABS DESKTOP */}
         <div className={s.topTabs}>
-          {(['agregar', 'productos'] as const).map(t => (
-            <button
-              key={t}
-              onClick={() => setTab(t)}
-              className={`${s.topTabBtn} ${tab === t ? s.active : ''}`}
-            >
-              {t === 'agregar' ? '+ Agregar producto' : `Mis productos (${productos.length})`}
+          {([
+            { key: 'productos', label: `Productos (${productos.length})` },
+            { key: 'agregar',   label: editId ? '✏️ Editando producto' : '+ Agregar producto' },
+            { key: 'ordenes',   label: `Órdenes (${ordenes.length})` },
+          ] as { key: Tab; label: string }[]).map(t => (
+            <button key={t.key} onClick={() => setTab(t.key)}
+              className={`${s.topTabBtn} ${tab === t.key ? s.active : ''}`}>
+              {t.label}
             </button>
           ))}
         </div>
 
-        {/* ── FORM AGREGAR ── */}
+        {/* ── FORM AGREGAR / EDITAR ── */}
         {tab === 'agregar' && (
           <form onSubmit={submit} noValidate>
-
-            {msg && (
-              <div className={msg.ok ? s.alertOk : s.alertErr}>{msg.text}</div>
+            {editId && (
+              <div className={s.editBanner}>
+                ✏️ Editando producto
+                <button type="button" className={s.btnCancelEdit} onClick={cancelEdit}>Cancelar edición</button>
+              </div>
             )}
+
+            {msg && <div className={msg.ok ? s.alertOk : s.alertErr}>{msg.text}</div>}
 
             {/* FOTOS */}
             <div className={s.card}>
               <span className={s.cardLabel}>Fotos del producto</span>
+              <input ref={fileRef} type="file" accept="image/*" multiple onChange={handleImg} style={{ display: 'none' }} />
 
-              {/* input oculto, reutilizable */}
-              <input
-                ref={fileRef} type="file" accept="image/*" multiple
-                onChange={handleImg} style={{ display: 'none' }}
-              />
-
-              {imgPrevs.length > 0 ? (
+              {(existingImgs.length > 0 || imgPrevs.length > 0) ? (
                 <div className={s.fotosGrid}>
+                  {existingImgs.map((src, i) => (
+                    <div key={`ex-${i}`} className={`${s.fotoItem} ${i === 0 && imgPrevs.length === 0 ? s.fotoPrimera : ''}`}>
+                      <Image src={src} alt={`foto existente ${i + 1}`} fill style={{ objectFit: 'cover' }} unoptimized />
+                      <button type="button" className={s.removePhoto} onClick={() => removeExistingImg(i)}>✕</button>
+                    </div>
+                  ))}
                   {imgPrevs.map((src, i) => (
-                    <div key={i} className={`${s.fotoItem} ${i === 0 ? s.fotoPrimera : ''}`}>
-                      <Image src={src} alt={`foto ${i + 1}`} fill style={{ objectFit: 'cover' }} />
+                    <div key={`new-${i}`} className={`${s.fotoItem} ${existingImgs.length === 0 && i === 0 ? s.fotoPrimera : ''}`}>
+                      <Image src={src} alt={`foto nueva ${i + 1}`} fill style={{ objectFit: 'cover' }} />
                       <button type="button" className={s.removePhoto} onClick={() => removeImg(i)}>✕</button>
                     </div>
                   ))}
-                  {/* Botón para agregar más */}
                   <label className={s.addMasBtn}>
                     <input type="file" accept="image/*" multiple onChange={handleImg} style={{ display: 'none' }} />
                     <span className={s.addMasIcon}>＋</span>
@@ -363,6 +345,7 @@ export default function AdminPage() {
               ) : (
                 <label className={s.dropzone}>
                   <input type="file" accept="image/*" multiple onChange={handleImg} style={{ display: 'none' }} />
+                  <span className={s.dropzoneIcon}>📷</span>
                   <span className={s.dropzoneTitle}>Toca para agregar fotos</span>
                   <span className={s.dropzoneSub}>Una o varias · Cámara o galería · JPG, PNG</span>
                 </label>
@@ -372,55 +355,31 @@ export default function AdminPage() {
             {/* INFO BÁSICA */}
             <div className={s.card}>
               <span className={s.cardLabel}>Información básica</span>
-
               <div className={s.fGroup}>
-                <label className={s.label} htmlFor="nombre">
-                  Nombre del producto <span className={s.req}>*</span>
-                </label>
-                <input
-                  id="nombre" type="text" maxLength={80}
+                <label className={s.label} htmlFor="nombre">Nombre del producto <span className={s.req}>*</span></label>
+                <input id="nombre" type="text" maxLength={80}
                   value={form.nombre} onChange={e => setField('nombre', e.target.value)}
-                  className={s.input} placeholder="Ej. Cheesecake de limón"
-                />
+                  className={s.input} placeholder="Ej. Cheesecake de limón" />
               </div>
-
               <div className={s.fRow}>
                 <div className={s.fGroup}>
-                  <label className={s.label} htmlFor="categoria">
-                    Categoría <span className={s.req}>*</span>
-                  </label>
-                  <select
-                    id="categoria"
-                    value={form.categoria} onChange={e => setField('categoria', e.target.value)}
-                    className={s.select}
-                  >
+                  <label className={s.label} htmlFor="categoria">Categoría <span className={s.req}>*</span></label>
+                  <select id="categoria" value={form.categoria} onChange={e => setField('categoria', e.target.value)} className={s.select}>
                     <option value="">— Elige —</option>
                     {CATEGORIAS.map(c => <option key={c}>{c}</option>)}
                   </select>
                 </div>
-
                 <div className={s.fGroup}>
-                  <label className={s.label} htmlFor="precio">
-                    Precio base ($) <span className={s.req}>*</span>
-                  </label>
-                  <input
-                    id="precio" type="number" min={0} step={10} inputMode="numeric"
+                  <label className={s.label} htmlFor="precio">Precio base ($) <span className={s.req}>*</span></label>
+                  <input id="precio" type="number" min={0} step={10} inputMode="numeric"
                     value={form.precio_base} onChange={e => setField('precio_base', e.target.value)}
-                    className={s.input} placeholder="320"
-                  />
+                    className={s.input} placeholder="320" />
                 </div>
               </div>
-
               <div className={s.fGroup} style={{ marginBottom: 0 }}>
-                <label className={s.label} htmlFor="desc">
-                  Descripción <span className={s.req}>*</span>
-                </label>
-                <textarea
-                  id="desc"
-                  value={form.descripcion} onChange={e => setField('descripcion', e.target.value)}
-                  className={s.textarea}
-                  placeholder="Sabores, rellenos, ingredientes, para cuántas personas…"
-                />
+                <label className={s.label} htmlFor="desc">Descripción <span className={s.req}>*</span></label>
+                <textarea id="desc" value={form.descripcion} onChange={e => setField('descripcion', e.target.value)}
+                  className={s.textarea} placeholder="Sabores, rellenos, ingredientes, para cuántas personas…" />
               </div>
             </div>
 
@@ -430,7 +389,6 @@ export default function AdminPage() {
               <p style={{ fontSize: '0.82rem', color: '#7A4A2A', marginBottom: '1rem', lineHeight: 1.5 }}>
                 Si el producto tiene varios tamaños agrégalos aquí. Si no, déjalo vacío.
               </p>
-
               {form.opciones.map((o, i) => (
                 <div key={i} className={s.opcionCard}>
                   <div className={s.opcionHeader}>
@@ -440,8 +398,7 @@ export default function AdminPage() {
                   <div className={s.opcionRow}>
                     <div>
                       <label className={s.label}>Nombre</label>
-                      <input type="text" value={o.nombre}
-                        onChange={e => updOpcion(i, 'nombre', e.target.value)}
+                      <input type="text" value={o.nombre} onChange={e => updOpcion(i, 'nombre', e.target.value)}
                         className={s.inputSm} placeholder="Mediano" />
                     </div>
                     <div>
@@ -453,16 +410,12 @@ export default function AdminPage() {
                   </div>
                   <div>
                     <label className={s.label}>Detalle (opcional)</label>
-                    <input type="text" value={o.descripcion ?? ''}
-                      onChange={e => updOpcion(i, 'descripcion', e.target.value)}
+                    <input type="text" value={o.descripcion ?? ''} onChange={e => updOpcion(i, 'descripcion', e.target.value)}
                       className={s.inputSm} placeholder="6-8 personas" />
                   </div>
                 </div>
               ))}
-
-              <button type="button" className={s.btnAddOpcion} onClick={addOpcion}>
-                + Agregar tamaño / opción
-              </button>
+              <button type="button" className={s.btnAddOpcion} onClick={addOpcion}>+ Agregar tamaño / opción</button>
             </div>
 
             {/* VISIBILIDAD */}
@@ -477,7 +430,7 @@ export default function AdminPage() {
             </div>
 
             <button type="submit" className={s.btnPrimary} disabled={busy}>
-              {busy ? 'Guardando...' : 'Guardar producto'}
+              {busy ? 'Guardando...' : editId ? 'Actualizar producto' : 'Guardar producto'}
             </button>
           </form>
         )}
@@ -485,18 +438,18 @@ export default function AdminPage() {
         {/* ── LISTA PRODUCTOS ── */}
         {tab === 'productos' && (
           <div>
-            <h2 className={s.listaHeader}>
-              Mis productos
-              <span className={s.conteo}>{productos.length}</span>
-            </h2>
+            <div className={s.listaHeaderRow}>
+              <h2 className={s.listaHeader}>
+                Mis productos <span className={s.conteo}>{productos.length}</span>
+              </h2>
+              <button className={s.btnAddNew} onClick={() => { cancelEdit(); setTab('agregar') }}>+ Agregar</button>
+            </div>
 
             {productos.length === 0 ? (
               <div className={`${s.card} ${s.empty}`}>
-                <span className={s.emptyIcon} />
+                <span className={s.emptyIcon}>🍒</span>
                 <p className={s.emptyText}>Aún no tienes productos.<br />¡Agrega el primero!</p>
-                <button className={s.btnEmptyCta} onClick={() => setTab('agregar')}>
-                  + Agregar producto
-                </button>
+                <button className={s.btnEmptyCta} onClick={() => setTab('agregar')}>+ Agregar producto</button>
               </div>
             ) : (
               <div className={s.productosList}>
@@ -505,8 +458,8 @@ export default function AdminPage() {
                     <div className={s.productoBody}>
                       <div className={s.productoThumb}>
                         {p.imagen_url
-                          ? <Image src={p.imagen_url} alt={p.nombre} fill style={{ objectFit: 'cover' }} />
-                          : '—'}
+                          ? <Image src={p.imagen_url} alt={p.nombre} fill style={{ objectFit: 'cover' }} unoptimized />
+                          : '🎂'}
                       </div>
                       <div className={s.productoInfo}>
                         <p className={s.productoNombre}>{p.nombre}</p>
@@ -520,9 +473,69 @@ export default function AdminPage() {
                         {p.activo ? '● Visible' : '○ Oculto'}
                       </span>
                       <div className={s.accionDivider} />
-                      <button className={`${s.accionBtn} ${s.accionEliminar}`} onClick={() => setDelId(p.id)}>
-                        Eliminar
-                      </button>
+                      <button className={s.accionBtn} onClick={() => startEdit(p)}>✏️ Editar</button>
+                      <div className={s.accionDivider} />
+                      <button className={`${s.accionBtn} ${s.accionEliminar}`} onClick={() => setDelId(p.id)}>Eliminar</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── ÓRDENES ── */}
+        {tab === 'ordenes' && (
+          <div>
+            {/* Stats */}
+            <div className={s.statsRow}>
+              <div className={s.statCard}>
+                <p className={s.statNum}>{ordenes.filter(o => o.status === 'paid').length}</p>
+                <p className={s.statLabel}>Pedidos pagados</p>
+              </div>
+              <div className={s.statCard}>
+                <p className={s.statNum}>${totalPagado.toLocaleString('es-MX')}</p>
+                <p className={s.statLabel}>Total recaudado</p>
+              </div>
+              <div className={s.statCard}>
+                <p className={s.statNum}>{ordenes.filter(o => o.status === 'pending').length}</p>
+                <p className={s.statLabel}>Pendientes</p>
+              </div>
+            </div>
+
+            {/* Filtros */}
+            <div className={s.filtros}>
+              {(['all', 'paid', 'pending'] as const).map(f => (
+                <button key={f} onClick={() => setOrdenFilter(f)}
+                  className={`${s.filtroBtn} ${ordenFilter === f ? s.filtroActive : ''}`}>
+                  {{ all: 'Todas', paid: 'Pagadas', pending: 'Pendientes' }[f]}
+                </button>
+              ))}
+            </div>
+
+            {ordenesFiltradas.length === 0 ? (
+              <div className={`${s.card} ${s.empty}`}>
+                <span className={s.emptyIcon}>📋</span>
+                <p className={s.emptyText}>No hay órdenes aún.<br />Aparecerán aquí cuando alguien pague.</p>
+              </div>
+            ) : (
+              <div className={s.ordenesList}>
+                {ordenesFiltradas.map(o => (
+                  <div key={o.id} className={s.ordenCard}>
+                    <div className={s.ordenTop}>
+                      <div>
+                        <p className={s.ordenProducto}>{o.producto_nombre}</p>
+                        {o.opcion_nombre && <p className={s.ordenOpcion}>{o.opcion_nombre}</p>}
+                      </div>
+                      <div className={s.ordenRight}>
+                        <p className={s.ordenPrecio}>${o.opcion_precio.toLocaleString('es-MX')}</p>
+                        <StatusBadge status={o.status} />
+                      </div>
+                    </div>
+                    <div className={s.ordenMeta}>
+                      {o.customer_name && <span>{o.customer_name}</span>}
+                      {o.customer_email && <span>{o.customer_email}</span>}
+                      <span>{new Date(o.created_at).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
                     </div>
                   </div>
                 ))}
@@ -535,14 +548,12 @@ export default function AdminPage() {
       {/* BOTTOM TABS (mobile) */}
       <nav className={s.bottomTabs}>
         {([
-          { key: 'agregar',   icon: '+', label: 'Agregar' },
-          { key: 'productos', icon: '·', label: `Productos (${productos.length})` },
-        ] as const).map(({ key, icon, label }) => (
-          <button
-            key={key}
-            onClick={() => setTab(key)}
-            className={`${s.tabBtn} ${tab === key ? s.active : ''}`}
-          >
+          { key: 'productos', icon: '📦', label: `Productos` },
+          { key: 'agregar',   icon: '＋',  label: editId ? 'Editar' : 'Agregar' },
+          { key: 'ordenes',   icon: '🧾',  label: 'Órdenes' },
+        ] as { key: Tab; icon: string; label: string }[]).map(({ key, icon, label }) => (
+          <button key={key} onClick={() => setTab(key)}
+            className={`${s.tabBtn} ${tab === key ? s.active : ''}`}>
             <span className={s.tabIcon}>{icon}</span>
             <span className={s.tabLabel}>{label}</span>
           </button>
@@ -554,9 +565,7 @@ export default function AdminPage() {
         <div className={s.modalOverlay} onClick={() => setDelId(null)}>
           <div className={s.modalBox} onClick={e => e.stopPropagation()}>
             <p className={s.modalTitle}>¿Eliminar producto?</p>
-            <p className={s.modalText}>
-              Esta acción no se puede deshacer. El producto dejará de aparecer en el sitio.
-            </p>
+            <p className={s.modalText}>Esta acción no se puede deshacer. El producto dejará de aparecer en el sitio.</p>
             <div className={s.modalBtns}>
               <button className={s.btnPrimary} onClick={confirmDel}>Sí, eliminar</button>
               <button className={s.btnSecondary} onClick={() => setDelId(null)}>Cancelar</button>

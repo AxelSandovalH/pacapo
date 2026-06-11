@@ -329,19 +329,32 @@ section { padding: 6rem 2rem; }
 #menu { background: var(--crema); }
 .menu-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
 .menu-card {
   background: var(--blanco);
   border-radius: 20px;
-  padding: 2rem;
+  overflow: hidden;
+  padding: 0;
   border: 1px solid var(--crema-osc);
   transition: box-shadow 0.2s, transform 0.2s;
 }
 .menu-card:hover { box-shadow: 0 8px 30px rgba(139,26,26,0.1); transform: translateY(-3px); }
-.menu-card-icon { font-size: 2.2rem; margin-bottom: 1rem; }
+.menu-card-img {
+  width: 100%; height: 180px; overflow: hidden;
+}
+.menu-card-img img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.4s;
+}
+.menu-card:hover .menu-card-img img { transform: scale(1.05); }
+.menu-card-icon { font-size: 2rem; margin: 1.2rem 2rem 0.5rem; }
+.menu-card h3,
+.menu-card .precio-rango,
+.menu-card .menu-sizes,
+.menu-card ul { padding-left: 2rem; padding-right: 2rem; }
 .menu-card h3 {
   font-family: var(--font-playfair), 'Playfair Display', serif;
   font-size: 1.35rem;
@@ -630,6 +643,53 @@ footer .dev-credit a:hover { opacity: 0.7; }
   50% { box-shadow: 0 4px 32px rgba(37,211,102,0.8), 0 0 0 8px rgba(37,211,102,0.15); }
 }
 
+/* ── OPCIONES SELECTOR (ProductCard interactivo) ── */
+.opciones-selector { margin-bottom: 1rem; }
+.opciones-label { font-size: 0.78rem; font-weight: 600; color: var(--cafe-med); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.5rem; }
+.opciones-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.6rem; }
+.opcion-chip-btn {
+  display: flex; flex-direction: column; align-items: center;
+  background: var(--crema); border: 1.5px solid var(--crema-osc);
+  border-radius: 0.6rem; padding: 0.4rem 0.7rem;
+  cursor: pointer; transition: all 0.15s; font-size: 0.78rem; color: var(--cafe);
+}
+.opcion-chip-btn:hover { border-color: var(--rojo); }
+.opcion-chip-btn.selected { border-color: var(--rojo); background: #fff0ee; }
+.opcion-chip-btn .sz-name { font-weight: 600; font-size: 0.75rem; }
+.opcion-chip-btn .sz-price { color: var(--rojo); font-weight: 700; font-size: 0.85rem; }
+.opcion-chip-btn .sz-pax { color: var(--cafe-med); font-size: 0.7rem; }
+.precio-seleccionado { font-size: 0.88rem; color: var(--cafe-med); }
+.precio-seleccionado strong { color: var(--rojo); font-size: 1rem; }
+
+/* ── CARD BOTONES DOBLES ── */
+.card-btns { display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; }
+.btn-pagar {
+  flex: 1; min-width: 130px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+  background: var(--rojo); color: #fff;
+  padding: 0.75rem 1rem; border-radius: 999px;
+  border: none; cursor: pointer; font-weight: 600; font-size: 0.85rem;
+  transition: background 0.2s, transform 0.15s;
+}
+.btn-pagar:hover:not(:disabled) { background: var(--rojo-claro); transform: translateY(-1px); }
+.btn-pagar:disabled { opacity: 0.65; cursor: not-allowed; }
+.btn-pedir {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+  background: #25d366; color: #fff;
+  padding: 0.75rem 1rem; border-radius: 999px;
+  text-decoration: none; font-weight: 600; font-size: 0.85rem;
+  transition: background 0.2s, transform 0.15s; white-space: nowrap;
+}
+.btn-pedir:hover { background: #1ebe5a; transform: translateY(-1px); }
+
+/* spinner inline */
+.spinner {
+  width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: #fff; border-radius: 50%;
+  animation: spin 0.7s linear infinite; display: inline-block;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
 /* ── RESPONSIVE ── */
 @media (max-width: 1024px) {
   .hero { grid-template-columns: 1fr; min-height: auto; }
@@ -637,6 +697,7 @@ footer .dev-credit a:hover { opacity: 0.7; }
   .hero-image { height: 55vw; max-height: 420px; order: 1; }
   .hero-badge { display: none; }
   .menu-grid { grid-template-columns: 1fr 1fr; }
+  .menu-card-img { height: 150px; }
   .proceso-grid { grid-template-columns: 1fr; }
   .proceso-imgs { order: -1; }
   .redes-grid { grid-template-columns: 1fr; }

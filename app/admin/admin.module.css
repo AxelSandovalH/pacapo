@@ -594,6 +594,7 @@
   font-family: 'Inter', sans-serif;
   color: #7A4A2A;
   transition: background 0.15s;
+  text-align: center;
 }
 .accionBtn:hover { background: #FBF0E4; }
 .accionDivider { width: 1px; background: #F0DEC8; flex-shrink: 0; }
@@ -626,6 +627,58 @@
 }
 .modalText { font-size: 0.88rem; color: #7A4A2A; margin-bottom: 1.5rem; line-height: 1.6; }
 .modalBtns { display: flex; flex-direction: column; gap: 0.6rem; }
+
+/* ── EDIT BANNER ── */
+.editBanner {
+  display: flex; align-items: center; justify-content: space-between;
+  background: #fff3cd; border: 1px solid #f0c040; border-radius: 14px;
+  padding: 0.85rem 1.25rem; margin-bottom: 1.25rem;
+  font-size: 0.9rem; font-weight: 600; color: #7a5000;
+}
+.btnCancelEdit {
+  background: none; border: 1.5px solid #c09020; border-radius: 50px;
+  color: #7a5000; font-size: 0.8rem; padding: 0.3rem 0.8rem;
+  cursor: pointer; font-family: 'Inter', sans-serif;
+}
+
+/* ── LISTA HEADER ROW ── */
+.listaHeaderRow { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+.listaHeader { font-family: 'Playfair Display', Georgia, serif; font-size: 1.4rem; color: #3D2012; display: flex; align-items: center; gap: 0.6rem; margin: 0; }
+.btnAddNew {
+  padding: 0.55rem 1.2rem; background: #8B1A1A; color: #fff;
+  border: none; border-radius: 50px; font-size: 0.85rem; font-weight: 600;
+  cursor: pointer; font-family: 'Inter', sans-serif;
+}
+
+/* ── ÓRDENES ── */
+.statsRow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1.25rem; }
+.statCard { background: #FFFAF7; border-radius: 16px; border: 1px solid #F0DEC8; padding: 1rem; text-align: center; }
+.statNum { font-size: 1.5rem; font-weight: 800; color: #8B1A1A; margin-bottom: 0.2rem; font-family: 'Playfair Display', Georgia, serif; }
+.statLabel { font-size: 0.72rem; color: #7A4A2A; font-weight: 500; }
+
+.filtros { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.filtroBtn {
+  padding: 0.45rem 1rem; border-radius: 50px; border: 1.5px solid #F0DEC8;
+  background: #FFFAF7; color: #7A4A2A; font-size: 0.82rem; font-weight: 500;
+  cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s;
+}
+.filtroActive { background: #8B1A1A; color: #fff; border-color: #8B1A1A; }
+
+.ordenesList { display: flex; flex-direction: column; gap: 0.75rem; }
+.ordenCard { background: #FFFAF7; border-radius: 16px; border: 1px solid #F0DEC8; padding: 1rem 1.25rem; }
+.ordenTop { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 0.6rem; }
+.ordenProducto { font-weight: 700; color: #3D2012; font-size: 0.95rem; }
+.ordenOpcion { font-size: 0.8rem; color: #7A4A2A; margin-top: 0.15rem; }
+.ordenRight { text-align: right; flex-shrink: 0; }
+.ordenPrecio { font-weight: 800; color: #8B1A1A; font-size: 1.05rem; margin-bottom: 0.3rem; }
+.ordenMeta { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.ordenMeta span { font-size: 0.75rem; color: #7A4A2A; background: #FBF0E4; padding: 0.2rem 0.6rem; border-radius: 50px; }
+
+/* Status badges */
+.badge { font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 50px; display: inline-block; }
+.badgePaid { background: #e8f8ef; color: #1a6a3a; }
+.badgePending { background: #fff3cd; color: #7a5000; }
+.badgeCancelled { background: #fce4e4; color: #8B1A1A; }
 
 /* ── RESPONSIVE DESKTOP ── */
 @media (min-width: 768px) {

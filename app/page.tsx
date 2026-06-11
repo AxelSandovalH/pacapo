@@ -1,5 +1,5 @@
-import Image from 'next/image'
 import { supabase, type Producto } from '@/lib/supabase'
+import ProductCard from '@/app/components/ProductCard'
 
 const WPP = '523141441119'
 const WPP_BASE = `https://wa.me/${WPP}`
@@ -12,17 +12,12 @@ const WPP_COTIZAR = waLink(
   'Hola Pácapo, quiero cotizar un postre para [ocasión] para [personas] personas en [fecha]. ¿Qué me recomiendas?'
 )
 
-function waProducto(nombre: string) {
-  return waLink(
-    `Hola Pácapo, me interesa el producto: *${nombre}*. ¿Tienen disponibilidad y cuánto tiempo de anticipación necesitan?`
-  )
-}
-
 const WPP_SVG = (
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
   </svg>
 )
+
 
 async function getProductos(): Promise<Producto[]> {
   const { data, error } = await supabase
@@ -145,53 +140,7 @@ export default async function Home() {
           ) : (
             <div className="productos-grid">
               {productos.map((p) => (
-                <div key={p.id} className="producto-card">
-                  <div className="producto-img">
-                    {p.imagen_url ? (
-                      <Image
-                        src={p.imagen_url}
-                        alt={p.nombre}
-                        fill
-                        style={{ objectFit: 'cover' }}
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      />
-                    ) : (
-                      <img
-                        src="/images/pastel-dos-pisos-frambuesas.jpg"
-                        alt={p.nombre}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      />
-                    )}
-                  </div>
-                  <div className="producto-body">
-                    <span className="categoria-badge">{p.categoria}</span>
-                    <h3 className="producto-nombre">{p.nombre}</h3>
-                    <p className="producto-desc">{p.descripcion}</p>
-
-                    {p.opciones && p.opciones.length > 0 ? (
-                      <div className="producto-opciones">
-                        {p.opciones.map((o, i) => (
-                          <span key={i} className="opcion-chip">
-                            {o.nombre}: <strong>${o.precio}</strong>
-                            {o.descripcion ? ` · ${o.descripcion}` : ''}
-                          </span>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="producto-precio">Desde ${p.precio_base}</p>
-                    )}
-
-                    <a
-                      href={waProducto(p.nombre)}
-                      className="btn-pedir"
-                      target="_blank"
-                      rel="noopener"
-                    >
-                      {WPP_SVG}
-                      Pedir por WhatsApp
-                    </a>
-                  </div>
-                </div>
+                <ProductCard key={p.id} producto={p} />
               ))}
             </div>
           )}
@@ -214,15 +163,20 @@ export default async function Home() {
             </p>
           </div>
           <div className="menu-grid">
+            {/* Pasteles */}
             <div className="menu-card">
+              <div className="menu-card-img">
+                <img src="/images/pastel-bento-lazos-rosa.png" alt="Pasteles por encargo" loading="lazy" />
+              </div>
               <div className="menu-card-icon">🎂</div>
               <h3>Pasteles por encargo</h3>
               <div className="menu-sizes">
                 {[
-                  { n: 'Individual', p: '$270', px: '1-2 pers.' },
-                  { n: 'Pequeño',    p: '$490', px: '6-8 pers.' },
-                  { n: 'Mediano',    p: '$580', px: '10-12 pers.' },
-                  { n: 'Grande',     p: '$700', px: '15-20 pers.' },
+                  { n: 'Box Lunch', p: '$270', px: '1-2 pers.' },
+                  { n: 'Pequeño',   p: '$480', px: '5-6 pers.' },
+                  { n: 'Mediano',   p: '$600', px: '8-10 pers.' },
+                  { n: 'Grande',    p: '$870', px: '12-15 pers.' },
+                  { n: 'Familiar',  p: '$1,150', px: '20-25 pers.' },
                 ].map((s) => (
                   <div key={s.n} className="size-chip">
                     <div className="sz-name">{s.n}</div>
@@ -232,20 +186,24 @@ export default async function Home() {
                 ))}
               </div>
               <ul>
-                {['Pingüino','Zanahoria','Vainilla clásico','Limón Silvestre','Banoffee','Mármol de chocolate','Doble cacao','+ rellenos extras $30'].map((f) => (
+                {['Vainilla','Doble Chocolate','Marmoleado','Limón','Zanahoria','Red Velvet','Banoffee','Moka','Pingüino','Gansito'].map((f) => (
                   <li key={f}>{f}</li>
                 ))}
               </ul>
             </div>
 
+            {/* Cheesecakes */}
             <div className="menu-card">
+              <div className="menu-card-img">
+                <img src="/images/cheesecake-flores-naturales-logo.png" alt="Cheesecakes artesanales" loading="lazy" />
+              </div>
               <div className="menu-card-icon">🥧</div>
-              <h3>Tartas & Cheesecakes</h3>
+              <h3>Cheesecakes Artesanales</h3>
               <div className="menu-sizes">
                 {[
                   { n: 'Chico',   p: '$320', px: '3-4 pers.' },
-                  { n: 'Mediano', p: '$480', px: '6-8 pers.' },
-                  { n: 'Grande',  p: '$670', px: '10-12 pers.' },
+                  { n: 'Mediano', p: '$550', px: '6-8 pers.' },
+                  { n: 'Grande',  p: '$850', px: '12-15 pers.' },
                 ].map((s) => (
                   <div key={s.n} className="size-chip">
                     <div className="sz-name">{s.n}</div>
@@ -255,15 +213,46 @@ export default async function Home() {
                 ))}
               </div>
               <ul>
-                {['Baileys','Snicker','Banoffee','Guayaba','Limón','Pay de manzana','Frutos rojos','Café','Tropical'].map((f) => (
+                {['Frutos rojos','Tropical','Manzana','Café','Lotus','Guayaba','Brownie','Cookie','Chocolate','Limón'].map((f) => (
                   <li key={f}>{f}</li>
                 ))}
               </ul>
             </div>
 
+            {/* Línea Premium */}
             <div className="menu-card">
+              <div className="menu-card-img">
+                <img src="/images/postre-opera-capas-chocolate.png" alt="Postres de línea premium" loading="lazy" />
+              </div>
+              <div className="menu-card-icon">✨</div>
+              <h3>Línea Premium</h3>
+              <div className="menu-sizes">
+                {[
+                  { n: 'Chico',   p: '$450',  px: '3-4 pers.' },
+                  { n: 'Mediano', p: '$680',  px: '6-8 pers.' },
+                  { n: 'Grande',  p: '$1,050', px: '12-15 pers.' },
+                ].map((s) => (
+                  <div key={s.n} className="size-chip">
+                    <div className="sz-name">{s.n}</div>
+                    <div className="sz-price">{s.p}</div>
+                    <div className="sz-pax">{s.px}</div>
+                  </div>
+                ))}
+              </div>
+              <ul>
+                {['Fraisier','Tiramisú','Ópera','Sacher','Tres Leches','Guinness'].map((f) => (
+                  <li key={f}>{f}</li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Cajitas Dulces */}
+            <div className="menu-card">
+              <div className="menu-card-img">
+                <img src="/images/alfajores-azucar-glass.jpg" alt="Cajitas dulces" loading="lazy" />
+              </div>
               <div className="menu-card-icon">🍪</div>
-              <h3>Galletas, Brownies & Alfajores</h3>
+              <h3>Cajitas Dulces</h3>
               <div className="menu-sizes">
                 {[
                   { n: '6 piezas',  p: '$240', px: '' },
@@ -277,7 +266,7 @@ export default async function Home() {
                 ))}
               </div>
               <ul>
-                {['Postres clásicos','Tiramisú','Pastel alemán','Pastel de crepas','Tres leches'].map((f) => (
+                {['Galletas artesanales','Brownies','Alfajores','Macarons'].map((f) => (
                   <li key={f}>{f}</li>
                 ))}
               </ul>
@@ -412,10 +401,6 @@ export default async function Home() {
           <a href="tel:+523141441119">314 144 1119</a>
         </div>
         <p className="copy">&copy; 2026 Pácapo Repostería. Todos los derechos reservados.</p>
-        <p className="dev-credit">
-          Desarrollado por{' '}
-          <a href="https://axelsandoval.dev" target="_blank" rel="noopener">Axel Sandoval</a>
-        </p>
       </footer>
 
       {/* FLOATING WPP */}
