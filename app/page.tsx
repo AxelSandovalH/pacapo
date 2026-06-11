@@ -1,6 +1,7 @@
 import { supabase, type Producto } from '@/lib/supabase'
 import ProductCard from '@/app/components/ProductCard'
 import MenuCard from '@/app/components/MenuCard'
+import MobileNav from '@/app/components/MobileNav'
 
 const WPP = '523141441119'
 const WPP_BASE = `https://wa.me/${WPP}`
@@ -53,6 +54,7 @@ export default async function Home() {
           <li><a href="#proceso">Nosotros</a></li>
           <li><a href="#pedido" className="nav-cta">Hacer pedido</a></li>
         </ul>
+        <MobileNav />
       </nav>
 
       {/* HERO */}
@@ -267,7 +269,7 @@ export default async function Home() {
             </p>
             <a href={WPP_COTIZAR} className="btn-wpp" target="_blank" rel="noopener">
               {WPP_SVG}
-              Cotizar por WhatsApp — es gratis
+              Cotizar por WhatsApp
             </a>
             <span className="microcopy" style={{ color: 'rgba(255,255,255,0.7)', display: 'block', marginTop: '0.7rem' }}>
               Respondemos en menos de 1 hora · Sin compromiso

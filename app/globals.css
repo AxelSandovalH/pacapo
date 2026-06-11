@@ -702,6 +702,53 @@ footer .dev-credit a:hover { opacity: 0.7; }
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* ── MOBILE NAV ── */
+.nav-hamburger {
+  display: none;
+  align-items: center; justify-content: center;
+  background: none; border: none; cursor: pointer;
+  color: var(--cafe); padding: 0.35rem;
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+.nav-hamburger:hover { background: var(--crema-osc); }
+
+.nav-mobile-overlay {
+  position: fixed; inset: 0; z-index: 149;
+  background: rgba(61,32,18,0.25);
+  backdrop-filter: blur(2px);
+}
+.nav-mobile-menu {
+  position: fixed; top: 66px; left: 0; right: 0; z-index: 150;
+  background: var(--blanco);
+  border-bottom: 1px solid var(--crema-osc);
+  display: flex; flex-direction: column;
+  padding: 0.5rem 0 1rem;
+  box-shadow: 0 8px 24px rgba(61,32,18,0.12);
+  animation: menuSlideDown 0.18s ease;
+}
+@keyframes menuSlideDown { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+
+.nav-mobile-menu a {
+  padding: 0.9rem 1.5rem;
+  font-size: 1rem; font-weight: 500;
+  color: var(--cafe); text-decoration: none;
+  border-bottom: 1px solid var(--crema-osc);
+  transition: background 0.1s;
+}
+.nav-mobile-menu a:last-child { border-bottom: none; }
+.nav-mobile-menu a:hover { background: var(--crema); }
+.nav-mobile-cta {
+  display: flex !important; align-items: center; gap: 0.5rem;
+  margin: 0.75rem 1.5rem 0 !important;
+  padding: 0.85rem 1.5rem !important;
+  background: #25D366 !important; color: #fff !important;
+  border-radius: 50px; font-weight: 700 !important;
+  border-bottom: none !important; justify-content: center;
+}
+.nav-mobile-cta svg { fill: #fff; flex-shrink: 0; }
+.nav-mobile-cta:hover { background: #1ebe5a !important; }
+
 /* ── RESPONSIVE ── */
 @media (max-width: 1024px) {
   .hero { grid-template-columns: 1fr; min-height: auto; }
@@ -715,12 +762,57 @@ footer .dev-credit a:hover { opacity: 0.7; }
   .redes-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 640px) {
+  /* Nav */
   .nav-links { display: none; }
-  .hero-text { padding: 2.5rem 1.5rem; }
-  section { padding: 4rem 1.2rem; }
-  .menu-grid { grid-template-columns: 1fr; }
-  .pedido-card { padding: 3rem 1.5rem; }
+  .nav-hamburger { display: flex; }
+
+  /* Hero */
+  .hero-text { padding: 2rem 1.5rem 1.5rem; }
+  .hero-title { font-size: 2.5rem; line-height: 1.15; }
+  .hero-desc { font-size: 1rem; }
+  .hero-btns { flex-direction: column; gap: 0.75rem; }
+  .hero-btns a, .hero-btns div { width: 100%; }
+  .btn-primary, .btn-secondary { width: 100%; justify-content: center; text-align: center; }
+
+  /* Strip */
+  .strip { font-size: 0.7rem; padding: 0.5rem 0; }
+
+  /* Social proof — 2×2 grid */
+  .social-proof {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem 0.5rem;
+    padding: 1.25rem 1.5rem;
+    justify-items: start;
+  }
+  .sp-dot { display: none; }
+  .sp-item { font-size: 0.8rem; }
+
+  /* Sections */
+  section { padding: 3rem 1.2rem; }
+  .section-title { font-size: 1.9rem; }
+
+  /* Products */
   .productos-grid { grid-template-columns: 1fr; }
+  .producto-img { height: 220px; }
+
+  /* Menu */
+  .menu-grid { grid-template-columns: 1fr; }
+
+  /* Pedido CTA */
+  .pedido-card { padding: 3rem 1.5rem 2.5rem; }
+  .btn-wpp { width: 100%; justify-content: center; font-size: 1rem; padding: 1rem 1.5rem; }
+  .info-chips { flex-direction: column; align-items: center; gap: 0.6rem; }
+
+  /* Footer — espacio para los botones flotantes */
+  footer { padding-bottom: 5rem; }
+
+  /* Floating buttons — lado a lado en la esquina inferior derecha */
+  .wpp-float {
+    width: 50px; height: 50px;
+    bottom: 1rem; right: 1rem;
+  }
+  .wpp-float svg { width: 26px; height: 26px; }
 }
 
 /* ── CHATBOT ── */
@@ -816,6 +908,18 @@ footer .dev-credit a:hover { opacity: 0.7; }
 .chat-send:not(:disabled):hover { background: var(--rojo-claro); }
 
 @media (max-width: 640px) {
-  .chat-window { width: calc(100vw - 2rem); right: 1rem; bottom: 5.5rem; max-height: 65vh; }
-  .chat-fab { bottom: 5rem; }
+  /* Chat FAB — a la izquierda del botón WPP */
+  .chat-fab {
+    width: 46px; height: 46px;
+    bottom: calc(1rem + 2px);
+    right: calc(1rem + 50px + 0.5rem);
+  }
+  .chat-fab-pulse { width: 11px; height: 11px; }
+  /* Chat window — sobre los botones flotantes */
+  .chat-window {
+    width: calc(100vw - 1.5rem);
+    right: 0.75rem;
+    bottom: calc(1rem + 50px + 0.75rem);
+    max-height: 70vh;
+  }
 }
