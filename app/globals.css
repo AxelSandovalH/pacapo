@@ -342,6 +342,16 @@ section { padding: 6rem 2rem; }
   transition: box-shadow 0.2s, transform 0.2s;
 }
 .menu-card:hover { box-shadow: 0 8px 30px rgba(139,26,26,0.1); transform: translateY(-3px); }
+.size-chip-active { border-color: var(--rojo) !important; background: #fff0ee; }
+.menu-buy-btn {
+  width: 100%; padding: 0.85rem 1rem; margin-top: 1rem;
+  background: var(--rojo); color: #fff; border: none; border-radius: 999px;
+  font-size: 0.88rem; font-weight: 700; font-family: inherit;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+  transition: background 0.2s, transform 0.15s;
+}
+.menu-buy-btn:hover:not(:disabled) { background: var(--rojo-claro); transform: translateY(-1px); }
+.menu-buy-btn:disabled { opacity: 0.65; cursor: not-allowed; }
 .menu-card-img {
   width: 100%; height: 180px; overflow: hidden;
 }

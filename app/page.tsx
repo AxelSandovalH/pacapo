@@ -1,5 +1,6 @@
 import { supabase, type Producto } from '@/lib/supabase'
 import ProductCard from '@/app/components/ProductCard'
+import MenuCard from '@/app/components/MenuCard'
 
 const WPP = '523141441119'
 const WPP_BASE = `https://wa.me/${WPP}`
@@ -163,114 +164,48 @@ export default async function Home() {
             </p>
           </div>
           <div className="menu-grid">
-            {/* Pasteles */}
-            <div className="menu-card">
-              <div className="menu-card-img">
-                <img src="/images/pastel-bento-lazos-rosa.png" alt="Pasteles por encargo" loading="lazy" />
-              </div>
-              <div className="menu-card-icon">🎂</div>
-              <h3>Pasteles por encargo</h3>
-              <div className="menu-sizes">
-                {[
-                  { n: 'Box Lunch', p: '$270', px: '1-2 pers.' },
-                  { n: 'Pequeño',   p: '$480', px: '5-6 pers.' },
-                  { n: 'Mediano',   p: '$600', px: '8-10 pers.' },
-                  { n: 'Grande',    p: '$870', px: '12-15 pers.' },
-                  { n: 'Familiar',  p: '$1,150', px: '20-25 pers.' },
-                ].map((s) => (
-                  <div key={s.n} className="size-chip">
-                    <div className="sz-name">{s.n}</div>
-                    <div className="sz-price">{s.p}</div>
-                    <div className="sz-pax">{s.px}</div>
-                  </div>
-                ))}
-              </div>
-              <ul>
-                {['Vainilla','Doble Chocolate','Marmoleado','Limón','Zanahoria','Red Velvet','Banoffee','Moka','Pingüino','Gansito'].map((f) => (
-                  <li key={f}>{f}</li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Cheesecakes */}
-            <div className="menu-card">
-              <div className="menu-card-img">
-                <img src="/images/cheesecake-flores-naturales-logo.png" alt="Cheesecakes artesanales" loading="lazy" />
-              </div>
-              <div className="menu-card-icon">🥧</div>
-              <h3>Cheesecakes Artesanales</h3>
-              <div className="menu-sizes">
-                {[
-                  { n: 'Chico',   p: '$320', px: '3-4 pers.' },
-                  { n: 'Mediano', p: '$550', px: '6-8 pers.' },
-                  { n: 'Grande',  p: '$850', px: '12-15 pers.' },
-                ].map((s) => (
-                  <div key={s.n} className="size-chip">
-                    <div className="sz-name">{s.n}</div>
-                    <div className="sz-price">{s.p}</div>
-                    <div className="sz-pax">{s.px}</div>
-                  </div>
-                ))}
-              </div>
-              <ul>
-                {['Frutos rojos','Tropical','Manzana','Café','Lotus','Guayaba','Brownie','Cookie','Chocolate','Limón'].map((f) => (
-                  <li key={f}>{f}</li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Línea Premium */}
-            <div className="menu-card">
-              <div className="menu-card-img">
-                <img src="/images/postre-opera-capas-chocolate.png" alt="Postres de línea premium" loading="lazy" />
-              </div>
-              <div className="menu-card-icon">✨</div>
-              <h3>Línea Premium</h3>
-              <div className="menu-sizes">
-                {[
-                  { n: 'Chico',   p: '$450',  px: '3-4 pers.' },
-                  { n: 'Mediano', p: '$680',  px: '6-8 pers.' },
-                  { n: 'Grande',  p: '$1,050', px: '12-15 pers.' },
-                ].map((s) => (
-                  <div key={s.n} className="size-chip">
-                    <div className="sz-name">{s.n}</div>
-                    <div className="sz-price">{s.p}</div>
-                    <div className="sz-pax">{s.px}</div>
-                  </div>
-                ))}
-              </div>
-              <ul>
-                {['Fraisier','Tiramisú','Ópera','Sacher','Tres Leches','Guinness'].map((f) => (
-                  <li key={f}>{f}</li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Cajitas Dulces */}
-            <div className="menu-card">
-              <div className="menu-card-img">
-                <img src="/images/alfajores-azucar-glass.jpg" alt="Cajitas dulces" loading="lazy" />
-              </div>
-              <div className="menu-card-icon">🍪</div>
-              <h3>Cajitas Dulces</h3>
-              <div className="menu-sizes">
-                {[
-                  { n: '6 piezas',  p: '$240', px: '' },
-                  { n: '9 piezas',  p: '$360', px: '' },
-                  { n: '12 piezas', p: '$480', px: '' },
-                ].map((s) => (
-                  <div key={s.n} className="size-chip">
-                    <div className="sz-name">{s.n}</div>
-                    <div className="sz-price">{s.p}</div>
-                  </div>
-                ))}
-              </div>
-              <ul>
-                {['Galletas artesanales','Brownies','Alfajores','Macarons'].map((f) => (
-                  <li key={f}>{f}</li>
-                ))}
-              </ul>
-            </div>
+            <MenuCard
+              icon="🎂" titulo="Pasteles por encargo" categoria="Pasteles"
+              imgSrc="/images/pastel-bento-lazos-rosa.png" imgAlt="Pasteles por encargo"
+              opciones={[
+                { n: 'Box Lunch', p: 270,  px: '1-2 pers.' },
+                { n: 'Pequeño',   p: 480,  px: '5-6 pers.' },
+                { n: 'Mediano',   p: 600,  px: '8-10 pers.' },
+                { n: 'Grande',    p: 870,  px: '12-15 pers.' },
+                { n: 'Familiar',  p: 1150, px: '20-25 pers.' },
+              ]}
+              sabores={['Vainilla','Doble Chocolate','Marmoleado','Limón','Zanahoria','Red Velvet','Banoffee','Moka','Pingüino','Gansito']}
+            />
+            <MenuCard
+              icon="🥧" titulo="Cheesecakes Artesanales" categoria="Cheesecakes"
+              imgSrc="/images/cheesecake-flores-naturales-logo.png" imgAlt="Cheesecakes artesanales"
+              opciones={[
+                { n: 'Chico',   p: 320, px: '3-4 pers.' },
+                { n: 'Mediano', p: 550, px: '6-8 pers.' },
+                { n: 'Grande',  p: 850, px: '12-15 pers.' },
+              ]}
+              sabores={['Frutos rojos','Tropical','Manzana','Café','Lotus','Guayaba','Brownie','Cookie','Chocolate','Limón']}
+            />
+            <MenuCard
+              icon="✨" titulo="Línea Premium" categoria="Postres Premium"
+              imgSrc="/images/postre-opera-capas-chocolate.png" imgAlt="Postres de línea premium"
+              opciones={[
+                { n: 'Chico',   p: 450,  px: '3-4 pers.' },
+                { n: 'Mediano', p: 680,  px: '6-8 pers.' },
+                { n: 'Grande',  p: 1050, px: '12-15 pers.' },
+              ]}
+              sabores={['Fraisier','Tiramisú','Ópera','Sacher','Tres Leches','Guinness']}
+            />
+            <MenuCard
+              icon="🍪" titulo="Cajitas Dulces" categoria="Dulcería"
+              imgSrc="/images/alfajores-azucar-glass.jpg" imgAlt="Cajitas dulces"
+              opciones={[
+                { n: '6 piezas',  p: 240 },
+                { n: '9 piezas',  p: 360 },
+                { n: '12 piezas', p: 480 },
+              ]}
+              sabores={['Galletas artesanales','Brownies','Alfajores','Macarons']}
+            />
           </div>
           <div className="menu-cta">
             <a href={WPP_COTIZAR} className="btn-primary" target="_blank" rel="noopener">
