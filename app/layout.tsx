@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Playfair_Display, Inter } from 'next/font/google'
 import './globals.css'
+import ChatBot from '@/app/components/ChatBot'
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -25,7 +26,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es" className={`${playfair.variable} ${inter.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <ChatBot />
+      </body>
     </html>
   )
 }
