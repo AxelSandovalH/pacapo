@@ -602,111 +602,156 @@ export default function AdminPage() {
       {/* ── OFERTAS ── */}
         {tab === 'ofertas' && (
           <div>
-            <h2 className={s.listaHeader} style={{ marginBottom: '1.5rem' }}>Ofertas y promociones</h2>
+            <div className={s.listaHeaderRow} style={{ marginBottom: '1.5rem' }}>
+              <h2 className={s.listaHeader}>🏷️ Ofertas <span className={s.conteo}>{ofertas.length}</span></h2>
+            </div>
 
-            {/* Form agregar/editar oferta */}
-            <form onSubmit={saveOferta} className={s.card} style={{ marginBottom: '2rem' }}>
-              <h3 style={{ fontWeight: 700, marginBottom: '1rem', color: 'var(--cafe)' }}>
-                {ofertaEditId ? '✏️ Editando oferta' : '+ Nueva oferta'}
-              </h3>
+            <div className={s.ofertasLayout}>
+              {/* Left: form */}
+              <form onSubmit={saveOferta}>
+                <div className={s.card} style={{ marginBottom: '1rem' }}>
+                  <span className={s.cardLabel}>{ofertaEditId ? '✏️ Editando oferta' : '+ Nueva oferta'}</span>
 
-              <div className={s.formGroup}>
-                <label className={s.label}>Título *</label>
-                <input className={s.input} placeholder="ej. 20% en pasteles medianos este fin de semana"
-                  value={ofertaForm.titulo} onChange={e => setOfertaForm(f => ({ ...f, titulo: e.target.value }))} />
-              </div>
+                  <div className={s.fGroup}>
+                    <label className={s.label}>Título <span className={s.req}>*</span></label>
+                    <input className={s.input} placeholder="ej. 20% en pasteles este fin de semana"
+                      value={ofertaForm.titulo} onChange={e => setOfertaForm(f => ({ ...f, titulo: e.target.value }))} />
+                  </div>
 
-              <div className={s.formGroup}>
-                <label className={s.label}>Descripción (opcional)</label>
-                <input className={s.input} placeholder="Más detalle de la oferta"
-                  value={ofertaForm.descripcion} onChange={e => setOfertaForm(f => ({ ...f, descripcion: e.target.value }))} />
-              </div>
+                  <div className={s.fGroup}>
+                    <label className={s.label}>Descripción <span style={{ fontWeight: 400, color: '#C4A882' }}>(opcional)</span></label>
+                    <input className={s.input} placeholder="Más detalle — ej. válido solo en pedidos por WhatsApp"
+                      value={ofertaForm.descripcion} onChange={e => setOfertaForm(f => ({ ...f, descripcion: e.target.value }))} />
+                  </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <div className={s.formGroup}>
-                  <label className={s.label}>Emoji</label>
-                  <input className={s.input} placeholder="🏷️"
-                    value={ofertaForm.emoji} onChange={e => setOfertaForm(f => ({ ...f, emoji: e.target.value }))} />
-                </div>
-                <div className={s.formGroup}>
-                  <label className={s.label}>Color de fondo</label>
-                  <select className={s.select} value={ofertaForm.color}
-                    onChange={e => setOfertaForm(f => ({ ...f, color: e.target.value }))}>
-                    {COLORES_OFERTA.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
-                  </select>
-                </div>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <div className={s.formGroup}>
-                  <label className={s.label}>Válida hasta (opcional)</label>
-                  <input className={s.input} type="date"
-                    value={ofertaForm.fecha_fin} onChange={e => setOfertaForm(f => ({ ...f, fecha_fin: e.target.value }))} />
-                </div>
-                <div className={s.formGroup} style={{ justifyContent: 'flex-end', paddingTop: '1.5rem' }}>
-                  <label className={s.label} style={{ marginBottom: '0.5rem' }}>Activa ahora</label>
-                  <Toggle on={ofertaForm.activa} onChange={v => setOfertaForm(f => ({ ...f, activa: v }))} />
-                </div>
-              </div>
-
-              {/* Preview */}
-              <div style={{ background: ofertaForm.color, borderRadius: 10, padding: '0.75rem 1rem', color: '#fff', display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1rem', fontSize: '0.9rem' }}>
-                <span style={{ fontSize: '1.2rem' }}>{ofertaForm.emoji}</span>
-                <div>
-                  <strong>{ofertaForm.titulo || 'Título de la oferta'}</strong>
-                  {ofertaForm.descripcion && <div style={{ fontSize: '0.8rem', opacity: 0.85 }}>{ofertaForm.descripcion}</div>}
-                </div>
-              </div>
-
-              {ofertaMsg && <p style={{ color: ofertaMsg.ok ? '#1a6a3a' : '#8B1A1A', marginBottom: '0.75rem', fontWeight: 600 }}>{ofertaMsg.text}</p>}
-
-              <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                <button type="submit" className={s.btnPrimary} disabled={ofertaBusy}>
-                  {ofertaBusy ? 'Guardando...' : ofertaEditId ? 'Actualizar oferta' : 'Crear oferta'}
-                </button>
-                {ofertaEditId && (
-                  <button type="button" className={s.btnSecondary}
-                    onClick={() => { setOfertaEditId(null); setOfertaForm(EMPTY_OFERTA); setOfertaMsg(null) }}>
-                    Cancelar
-                  </button>
-                )}
-              </div>
-            </form>
-
-            {/* Lista de ofertas */}
-            {ofertas.length === 0 ? (
-              <div className={`${s.card} ${s.empty}`}>
-                <span className={s.emptyIcon}>🏷️</span>
-                <p className={s.emptyText}>No hay ofertas aún.<br />Crea la primera arriba.</p>
-              </div>
-            ) : (
-              <div className={s.productosList}>
-                {ofertas.map(o => (
-                  <div key={o.id} className={s.productoCard}>
-                    <div className={s.productoBody}>
-                      <div style={{ width: 40, height: 40, borderRadius: 10, background: o.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', flexShrink: 0 }}>
-                        {o.emoji}
-                      </div>
-                      <div className={s.productoInfo}>
-                        <p className={s.productoNombre}>{o.titulo}</p>
-                        {o.descripcion && <p className={s.productoCategoria}>{o.descripcion}</p>}
-                        {o.fecha_fin && <p className={s.productoPrecio}>Hasta {new Date(o.fecha_fin + 'T12:00:00').toLocaleDateString('es-MX', { day: 'numeric', month: 'long' })}</p>}
-                      </div>
-                      <Toggle on={o.activa} onChange={() => toggleOferta(o)} />
+                  <div className={s.fRow}>
+                    <div className={s.fGroup} style={{ marginBottom: 0 }}>
+                      <label className={s.label}>Emoji</label>
+                      <input className={s.input} placeholder="🏷️" maxLength={4}
+                        value={ofertaForm.emoji} onChange={e => setOfertaForm(f => ({ ...f, emoji: e.target.value }))} />
                     </div>
-                    <div className={s.productoAcciones}>
-                      <span className={s.accionBtn} style={{ color: o.activa ? '#1a6a3a' : '#7A4A2A' }}>
-                        {o.activa ? '● Activa' : '○ Inactiva'}
-                      </span>
-                      <div className={s.accionDivider} />
-                      <button className={s.accionBtn} onClick={() => { editOferta(o); window.scrollTo({ top: 0, behavior: 'smooth' }) }}>✏️ Editar</button>
-                      <div className={s.accionDivider} />
-                      <button className={`${s.accionBtn} ${s.accionEliminar}`} onClick={() => { if (confirm('¿Eliminar esta oferta?')) deleteOferta(o.id) }}>Eliminar</button>
+                    <div className={s.fGroup} style={{ marginBottom: 0 }}>
+                      <label className={s.label}>Válida hasta <span style={{ fontWeight: 400, color: '#C4A882' }}>(opcional)</span></label>
+                      <input className={s.input} type="date"
+                        value={ofertaForm.fecha_fin} onChange={e => setOfertaForm(f => ({ ...f, fecha_fin: e.target.value }))} />
                     </div>
                   </div>
-                ))}
+                </div>
+
+                <div className={s.card} style={{ marginBottom: '1rem' }}>
+                  <span className={s.cardLabel}>Color de fondo</span>
+                  <div className={s.colorSwatches}>
+                    {COLORES_OFERTA.map(c => (
+                      <button key={c.value} type="button"
+                        className={`${s.colorSwatch} ${ofertaForm.color === c.value ? s.colorSwatchActive : ''}`}
+                        style={{ background: c.value }}
+                        onClick={() => setOfertaForm(f => ({ ...f, color: c.value }))}
+                        title={c.label}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className={s.card} style={{ marginBottom: '1rem' }}>
+                  <div className={s.visibilidadRow}>
+                    <div className={s.visibilidadText}>
+                      <p>Mostrar en el sitio</p>
+                      <p>{ofertaForm.activa ? 'La barra aparecerá en la página principal' : 'La oferta estará oculta'}</p>
+                    </div>
+                    <Toggle on={ofertaForm.activa} onChange={v => setOfertaForm(f => ({ ...f, activa: v }))} />
+                  </div>
+                </div>
+
+                {ofertaMsg && (
+                  <div className={ofertaMsg.ok ? s.alertOk : s.alertErr} style={{ marginBottom: '1rem' }}>
+                    {ofertaMsg.text}
+                  </div>
+                )}
+
+                <div style={{ display: 'flex', gap: '0.75rem' }}>
+                  <button type="submit" className={s.btnPrimary} disabled={ofertaBusy}>
+                    {ofertaBusy ? 'Guardando...' : ofertaEditId ? 'Actualizar oferta' : 'Crear oferta'}
+                  </button>
+                  {ofertaEditId && (
+                    <button type="button" className={s.btnSecondary}
+                      onClick={() => { setOfertaEditId(null); setOfertaForm(EMPTY_OFERTA); setOfertaMsg(null) }}>
+                      Cancelar
+                    </button>
+                  )}
+                </div>
+              </form>
+
+              {/* Right: preview + list */}
+              <div>
+                {/* Live preview */}
+                <div className={s.card} style={{ marginBottom: '1.5rem' }}>
+                  <span className={s.cardLabel}>Vista previa</span>
+                  <div className={s.ofertaPreviewBar} style={{ background: ofertaForm.color }}>
+                    <span style={{ fontSize: '1.3rem', lineHeight: 1, flexShrink: 0 }}>{ofertaForm.emoji || '🏷️'}</span>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontWeight: 700, fontSize: '0.92rem' }}>
+                        {ofertaForm.titulo || <span style={{ opacity: 0.55 }}>Título de la oferta</span>}
+                      </div>
+                      {ofertaForm.descripcion && (
+                        <div style={{ fontSize: '0.78rem', opacity: 0.85, marginTop: '0.1rem' }}>{ofertaForm.descripcion}</div>
+                      )}
+                    </div>
+                    {ofertaForm.fecha_fin && (
+                      <span style={{ fontSize: '0.72rem', opacity: 0.85, flexShrink: 0, fontWeight: 600 }}>
+                        Hasta {new Date(ofertaForm.fecha_fin + 'T12:00:00').toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}
+                      </span>
+                    )}
+                    <span style={{ opacity: 0.7, fontSize: '0.85rem', flexShrink: 0, cursor: 'default' }}>✕</span>
+                  </div>
+                  <p style={{ fontSize: '0.75rem', color: '#C4A882', marginTop: '0.75rem', textAlign: 'center' }}>
+                    Así se ve la barra en la página principal
+                  </p>
+                </div>
+
+                {/* Lista */}
+                <div className={s.ofertasListHeader}>
+                  <span className={s.cardLabel} style={{ marginBottom: 0 }}>Ofertas guardadas</span>
+                </div>
+                {ofertas.length === 0 ? (
+                  <div className={s.card}>
+                    <div className={s.empty}>
+                      <span className={s.emptyIcon}>🏷️</span>
+                      <p className={s.emptyText}>No hay ofertas aún.<br />Crea la primera.</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                    {ofertas.map(o => (
+                      <div key={o.id} className={s.ofertaCard}>
+                        <div className={s.ofertaCardBar} style={{ background: o.color }} />
+                        <div className={s.ofertaCardBody}>
+                          <div className={s.ofertaCardEmoji}>{o.emoji}</div>
+                          <div className={s.productoInfo}>
+                            <p className={s.productoNombre}>{o.titulo}</p>
+                            {o.descripcion && <p className={s.productoCategoria}>{o.descripcion}</p>}
+                            {o.fecha_fin && (
+                              <p style={{ fontSize: '0.75rem', color: '#8B1A1A', fontWeight: 600, marginTop: '0.15rem' }}>
+                                Hasta {new Date(o.fecha_fin + 'T12:00:00').toLocaleDateString('es-MX', { day: 'numeric', month: 'long' })}
+                              </p>
+                            )}
+                          </div>
+                          <Toggle on={o.activa} onChange={() => toggleOferta(o)} />
+                        </div>
+                        <div className={s.productoAcciones}>
+                          <span className={s.accionBtn} style={{ color: o.activa ? '#1a6a3a' : '#C4A882', fontSize: '0.75rem' }}>
+                            {o.activa ? '● Activa' : '○ Inactiva'}
+                          </span>
+                          <div className={s.accionDivider} />
+                          <button className={s.accionBtn} onClick={() => { editOferta(o); window.scrollTo({ top: 0, behavior: 'smooth' }) }}>✏️ Editar</button>
+                          <div className={s.accionDivider} />
+                          <button className={`${s.accionBtn} ${s.accionEliminar}`} onClick={() => { if (confirm('¿Eliminar esta oferta?')) deleteOferta(o.id) }}>Eliminar</button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
+            </div>
           </div>
         )}
 

@@ -110,7 +110,14 @@ export default async function Home() {
 
       {/* STRIP */}
       <div className="strip">
-        <span>✦</span> Pasteles por encargo <span>✦</span> Tartas artesanales <span>✦</span> Cheesecakes <span>✦</span> Macarons <span>✦</span> Cookies <span>✦</span> Alfajores <span>✦</span>
+        <div className="strip-track" aria-hidden="true">
+          <span className="strip-items">
+            <span>✦</span> Pasteles por encargo <span>✦</span> Tartas artesanales <span>✦</span> Cheesecakes <span>✦</span> Macarons <span>✦</span> Cookies <span>✦</span> Alfajores{' '}
+          </span>
+          <span className="strip-items" aria-hidden="true">
+            <span>✦</span> Pasteles por encargo <span>✦</span> Tartas artesanales <span>✦</span> Cheesecakes <span>✦</span> Macarons <span>✦</span> Cookies <span>✦</span> Alfajores{' '}
+          </span>
+        </div>
       </div>
 
       {/* SOCIAL PROOF */}

@@ -157,18 +157,32 @@ nav {
 .strip {
   background: var(--rojo);
   color: #fff;
-  padding: 1rem 2rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 3rem;
-  flex-wrap: wrap;
+  padding: 0.75rem 0;
+  overflow: hidden;
   font-size: 0.8rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   font-weight: 500;
+  white-space: nowrap;
+}
+.strip-track {
+  display: inline-flex;
+  animation: ticker 28s linear infinite;
+}
+.strip-items {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding-right: 1.5rem;
 }
 .strip span { opacity: 0.6; }
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .strip-track { animation: none; }
+}
 
 /* ── SECCIONES ── */
 section { padding: 6rem 2rem; }
