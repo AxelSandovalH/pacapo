@@ -2,6 +2,7 @@ import { supabase, type Producto } from '@/lib/supabase'
 import ProductCard from '@/app/components/ProductCard'
 import MenuCard from '@/app/components/MenuCard'
 import MobileNav from '@/app/components/MobileNav'
+import AnnouncementBar from '@/app/components/AnnouncementBar'
 
 const WPP = '523141441119'
 const WPP_BASE = `https://wa.me/${WPP}`
@@ -42,6 +43,8 @@ export default async function Home() {
 
   return (
     <>
+      <AnnouncementBar />
+
       {/* NAV */}
       <nav>
         <a href="#inicio" className="nav-logo">

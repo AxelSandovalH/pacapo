@@ -22,5 +22,16 @@ export type Producto = {
   created_at: string
 }
 
+export type Oferta = {
+  id: string
+  titulo: string
+  descripcion: string
+  emoji: string
+  color: string
+  activa: boolean
+  fecha_fin: string | null
+  created_at: string
+}
+
 // Client singleton — works in both server and browser contexts for our use case
 export const supabase = createClient(url, anon)

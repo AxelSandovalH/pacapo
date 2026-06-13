@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { createClient } from '@supabase/supabase-js'
-import type { Opcion, Producto } from '@/lib/supabase'
+import type { Opcion, Producto, Oferta } from '@/lib/supabase'
 import s from './admin.module.css'
 
 const supabase = createClient(
@@ -36,7 +36,16 @@ function compressImage(file: File): Promise<Blob> {
 
 const CATEGORIAS = ['Pasteles', 'Cheesecakes', 'Postres Premium', 'Dulcería', 'Cupcakes', 'Macarons']
 
-type Tab = 'agregar' | 'productos' | 'ordenes'
+type Tab = 'agregar' | 'productos' | 'ordenes' | 'ofertas'
+
+type OfertaForm = { titulo: string; descripcion: string; emoji: string; color: string; activa: boolean; fecha_fin: string }
+const EMPTY_OFERTA: OfertaForm = { titulo: '', descripcion: '', emoji: '🏷️', color: '#8B1A1A', activa: true, fecha_fin: '' }
+const COLORES_OFERTA = [
+  { label: 'Rojo Pácapo', value: '#8B1A1A' },
+  { label: 'Verde WhatsApp', value: '#1a6a3a' },
+  { label: 'Dorado', value: '#7A5A00' },
+  { label: 'Azul marino', value: '#1a3a6a' },
+]
 
 type Orden = {
   id: string
@@ -97,6 +106,11 @@ export default function AdminPage() {
   const [msg, setMsg]             = useState<{ ok: boolean; text: string } | null>(null)
   const [delId, setDelId]         = useState<string | null>(null)
   const [ordenFilter, setOrdenFilter] = useState<'all' | 'paid' | 'pending'>('all')
+  const [ofertas, setOfertas]         = useState<Oferta[]>([])
+  const [ofertaForm, setOfertaForm]   = useState<OfertaForm>(EMPTY_OFERTA)
+  const [ofertaEditId, setOfertaEditId] = useState<string | null>(null)
+  const [ofertaBusy, setOfertaBusy]   = useState(false)
+  const [ofertaMsg, setOfertaMsg]     = useState<{ ok: boolean; text: string } | null>(null)
 
   const fileRef = useRef<HTMLInputElement>(null)
 
@@ -126,12 +140,51 @@ export default function AdminPage() {
   }
 
   async function loadAll() {
-    const [{ data: prods }, { data: ords }] = await Promise.all([
+    const [{ data: prods }, { data: ords }, { data: offs }] = await Promise.all([
       supabase.from('productos').select('*').order('created_at', { ascending: false }),
       supabase.from('ordenes').select('*').order('created_at', { ascending: false }),
+      supabase.from('ofertas').select('*').order('created_at', { ascending: false }),
     ])
     setProductos((prods as Producto[]) ?? [])
     setOrdenes((ords as Orden[]) ?? [])
+    setOfertas((offs as Oferta[]) ?? [])
+  }
+
+  async function saveOferta(e: React.FormEvent) {
+    e.preventDefault(); setOfertaBusy(true); setOfertaMsg(null)
+    if (!ofertaForm.titulo.trim()) { setOfertaMsg({ ok: false, text: 'Escribe el título de la oferta.' }); setOfertaBusy(false); return }
+    const payload = {
+      titulo: ofertaForm.titulo.trim(),
+      descripcion: ofertaForm.descripcion.trim(),
+      emoji: ofertaForm.emoji || '🏷️',
+      color: ofertaForm.color,
+      activa: ofertaForm.activa,
+      fecha_fin: ofertaForm.fecha_fin || null,
+    }
+    const { error } = ofertaEditId
+      ? await supabase.from('ofertas').update(payload).eq('id', ofertaEditId)
+      : await supabase.from('ofertas').insert(payload)
+    if (error) { setOfertaMsg({ ok: false, text: 'Error al guardar: ' + error.message }); setOfertaBusy(false); return }
+    setOfertaMsg({ ok: true, text: ofertaEditId ? 'Oferta actualizada.' : 'Oferta creada.' })
+    setOfertaForm(EMPTY_OFERTA); setOfertaEditId(null)
+    setOfertaBusy(false)
+    loadAll()
+  }
+
+  async function toggleOferta(o: Oferta) {
+    await supabase.from('ofertas').update({ activa: !o.activa }).eq('id', o.id)
+    loadAll()
+  }
+
+  async function deleteOferta(id: string) {
+    await supabase.from('ofertas').delete().eq('id', id)
+    loadAll()
+  }
+
+  function editOferta(o: Oferta) {
+    setOfertaEditId(o.id)
+    setOfertaForm({ titulo: o.titulo, descripcion: o.descripcion || '', emoji: o.emoji || '🏷️', color: o.color || '#8B1A1A', activa: o.activa, fecha_fin: o.fecha_fin || '' })
+    setOfertaMsg(null)
   }
 
   function setField<K extends keyof FormState>(key: K, val: FormState[K]) {
@@ -297,6 +350,7 @@ export default function AdminPage() {
             { key: 'productos', label: `Productos (${productos.length})` },
             { key: 'agregar',   label: editId ? '✏️ Editando producto' : '+ Agregar producto' },
             { key: 'ordenes',   label: `Órdenes (${ordenes.length})` },
+            { key: 'ofertas',   label: `🏷️ Ofertas (${ofertas.length})` },
           ] as { key: Tab; label: string }[]).map(t => (
             <button key={t.key} onClick={() => setTab(t.key)}
               className={`${s.topTabBtn} ${tab === t.key ? s.active : ''}`}>
@@ -545,12 +599,124 @@ export default function AdminPage() {
         )}
       </main>
 
+      {/* ── OFERTAS ── */}
+        {tab === 'ofertas' && (
+          <div>
+            <h2 className={s.listaHeader} style={{ marginBottom: '1.5rem' }}>Ofertas y promociones</h2>
+
+            {/* Form agregar/editar oferta */}
+            <form onSubmit={saveOferta} className={s.card} style={{ marginBottom: '2rem' }}>
+              <h3 style={{ fontWeight: 700, marginBottom: '1rem', color: 'var(--cafe)' }}>
+                {ofertaEditId ? '✏️ Editando oferta' : '+ Nueva oferta'}
+              </h3>
+
+              <div className={s.formGroup}>
+                <label className={s.label}>Título *</label>
+                <input className={s.input} placeholder="ej. 20% en pasteles medianos este fin de semana"
+                  value={ofertaForm.titulo} onChange={e => setOfertaForm(f => ({ ...f, titulo: e.target.value }))} />
+              </div>
+
+              <div className={s.formGroup}>
+                <label className={s.label}>Descripción (opcional)</label>
+                <input className={s.input} placeholder="Más detalle de la oferta"
+                  value={ofertaForm.descripcion} onChange={e => setOfertaForm(f => ({ ...f, descripcion: e.target.value }))} />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className={s.formGroup}>
+                  <label className={s.label}>Emoji</label>
+                  <input className={s.input} placeholder="🏷️"
+                    value={ofertaForm.emoji} onChange={e => setOfertaForm(f => ({ ...f, emoji: e.target.value }))} />
+                </div>
+                <div className={s.formGroup}>
+                  <label className={s.label}>Color de fondo</label>
+                  <select className={s.select} value={ofertaForm.color}
+                    onChange={e => setOfertaForm(f => ({ ...f, color: e.target.value }))}>
+                    {COLORES_OFERTA.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className={s.formGroup}>
+                  <label className={s.label}>Válida hasta (opcional)</label>
+                  <input className={s.input} type="date"
+                    value={ofertaForm.fecha_fin} onChange={e => setOfertaForm(f => ({ ...f, fecha_fin: e.target.value }))} />
+                </div>
+                <div className={s.formGroup} style={{ justifyContent: 'flex-end', paddingTop: '1.5rem' }}>
+                  <label className={s.label} style={{ marginBottom: '0.5rem' }}>Activa ahora</label>
+                  <Toggle on={ofertaForm.activa} onChange={v => setOfertaForm(f => ({ ...f, activa: v }))} />
+                </div>
+              </div>
+
+              {/* Preview */}
+              <div style={{ background: ofertaForm.color, borderRadius: 10, padding: '0.75rem 1rem', color: '#fff', display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1rem', fontSize: '0.9rem' }}>
+                <span style={{ fontSize: '1.2rem' }}>{ofertaForm.emoji}</span>
+                <div>
+                  <strong>{ofertaForm.titulo || 'Título de la oferta'}</strong>
+                  {ofertaForm.descripcion && <div style={{ fontSize: '0.8rem', opacity: 0.85 }}>{ofertaForm.descripcion}</div>}
+                </div>
+              </div>
+
+              {ofertaMsg && <p style={{ color: ofertaMsg.ok ? '#1a6a3a' : '#8B1A1A', marginBottom: '0.75rem', fontWeight: 600 }}>{ofertaMsg.text}</p>}
+
+              <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                <button type="submit" className={s.btnPrimary} disabled={ofertaBusy}>
+                  {ofertaBusy ? 'Guardando...' : ofertaEditId ? 'Actualizar oferta' : 'Crear oferta'}
+                </button>
+                {ofertaEditId && (
+                  <button type="button" className={s.btnSecondary}
+                    onClick={() => { setOfertaEditId(null); setOfertaForm(EMPTY_OFERTA); setOfertaMsg(null) }}>
+                    Cancelar
+                  </button>
+                )}
+              </div>
+            </form>
+
+            {/* Lista de ofertas */}
+            {ofertas.length === 0 ? (
+              <div className={`${s.card} ${s.empty}`}>
+                <span className={s.emptyIcon}>🏷️</span>
+                <p className={s.emptyText}>No hay ofertas aún.<br />Crea la primera arriba.</p>
+              </div>
+            ) : (
+              <div className={s.productosList}>
+                {ofertas.map(o => (
+                  <div key={o.id} className={s.productoCard}>
+                    <div className={s.productoBody}>
+                      <div style={{ width: 40, height: 40, borderRadius: 10, background: o.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', flexShrink: 0 }}>
+                        {o.emoji}
+                      </div>
+                      <div className={s.productoInfo}>
+                        <p className={s.productoNombre}>{o.titulo}</p>
+                        {o.descripcion && <p className={s.productoCategoria}>{o.descripcion}</p>}
+                        {o.fecha_fin && <p className={s.productoPrecio}>Hasta {new Date(o.fecha_fin + 'T12:00:00').toLocaleDateString('es-MX', { day: 'numeric', month: 'long' })}</p>}
+                      </div>
+                      <Toggle on={o.activa} onChange={() => toggleOferta(o)} />
+                    </div>
+                    <div className={s.productoAcciones}>
+                      <span className={s.accionBtn} style={{ color: o.activa ? '#1a6a3a' : '#7A4A2A' }}>
+                        {o.activa ? '● Activa' : '○ Inactiva'}
+                      </span>
+                      <div className={s.accionDivider} />
+                      <button className={s.accionBtn} onClick={() => { editOferta(o); window.scrollTo({ top: 0, behavior: 'smooth' }) }}>✏️ Editar</button>
+                      <div className={s.accionDivider} />
+                      <button className={`${s.accionBtn} ${s.accionEliminar}`} onClick={() => { if (confirm('¿Eliminar esta oferta?')) deleteOferta(o.id) }}>Eliminar</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
       {/* BOTTOM TABS (mobile) */}
       <nav className={s.bottomTabs}>
         {([
           { key: 'productos', icon: '📦', label: `Productos` },
           { key: 'agregar',   icon: '＋',  label: editId ? 'Editar' : 'Agregar' },
           { key: 'ordenes',   icon: '🧾',  label: 'Órdenes' },
+          { key: 'ofertas',   icon: '🏷️',  label: 'Ofertas' },
         ] as { key: Tab; icon: string; label: string }[]).map(({ key, icon, label }) => (
           <button key={key} onClick={() => setTab(key)}
             className={`${s.tabBtn} ${tab === key ? s.active : ''}`}>
