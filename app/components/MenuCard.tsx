@@ -27,8 +27,8 @@ function waOrden(titulo: string, opcion: Opcion, saboresDisponibles: string[]) {
 📅 *Fecha que lo necesito:*
 ⏰ *Hora de entrega:*
 👥 *Número de personas:*
-📍 *¿Paso a recoger o necesito entrega?:*
-💬 *Observaciones / decoración especial:* `
+📍 Entregas en Barrio 5, Avenida de los gansos No.18
+💬 *Observaciones / decoración especial:* Mandamos tu imagen de referencia`
   return `https://wa.me/${WPP}?text=${encodeURIComponent(msg)}`
 }
 
